@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Queueinator.Domain.RabbitMq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,8 @@ namespace Queueinator.Forms
         public Form1(NewServerForm newServerForm)
         {
             InitializeComponent();
+
+            tsAddServer.Click += tsAddServer_Click;
             _newServerForm = newServerForm;
         }
 
@@ -25,12 +28,20 @@ namespace Queueinator.Forms
             ConnectToAServer(_newServerForm);
         }
 
-        private static void ConnectToAServer(NewServerForm newServerPopup)
+        Dictionary<String, VirtualHost> _virtualHosts = new Dictionary<string, VirtualHost>();
+
+        private void ConnectToAServer(NewServerForm newServerPopup)
         {
             var dialogResult = newServerPopup.ShowDialog();
 
             if (dialogResult == DialogResult.OK)
             {
+                var virtualHost = newServerPopup.VirtualHost;
+
+                _virtualHosts.Add(virtualHost.Name, virtualHost);
+
+                treeViewQueues.Nodes.Add(virtualHost.Name);
+
                 MessageBox.Show("Connected");
             }
             else if(dialogResult == DialogResult.Retry)

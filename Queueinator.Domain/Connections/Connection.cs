@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Queueinator.Domain.Connections
 {
     public class Connection
     {
+        public String Name { get; set; }
+
+        public String Description { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Queueinator.Application.Features.TryConnect;
+using Queueinator.Domain.RabbitMq;
 
 namespace Queueinator.Forms
 {
@@ -19,17 +21,32 @@ namespace Queueinator.Forms
             _mediator = mediator;
         }
 
+        public VirtualHost VirtualHost { get; private set; }
+
         private async void btnConnect_Click(object sender, EventArgs e)
         {
             if (txtServer.Text != "")
             {
 
-                await _mediator.Send(new TryConnectCommand()
+                var virtualHost = await _mediator.Send(new TryConnectCommand()
                 {
-                    
+                    Server = txtServer.Text,
+                    Port = txtPort.Text,
+                    User = txtUser.Text,
+                    Password = txtPassword.Text
                 });
 
-                DialogResult = DialogResult.OK;
+                if (virtualHost.IsFailure)
+                {
+                    MessageBox.Show(virtualHost.Error.ToString());
+                    DialogResult = DialogResult.Retry;
+                }
+                else
+                {
+                    VirtualHost = virtualHost.Value;
+                    DialogResult = DialogResult.OK;
+                }
+
             }
             else
             {

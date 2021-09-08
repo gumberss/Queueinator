@@ -82,7 +82,7 @@ namespace Queueinator.Forms
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Size = new System.Drawing.Size(1336, 794);
             this.splitContainer1.SplitterDistance = 226;
-            this.splitContainer1.SplitterWidth = 8;
+            this.splitContainer1.SplitterWidth = 9;
             this.splitContainer1.TabIndex = 1;
             this.splitContainer1.Tag = "";
             // 
@@ -99,7 +99,6 @@ namespace Queueinator.Forms
             // 
             // tsAddServer
             // 
-            this.tsAddServer.Click += tsAddServer_Click;
             this.tsAddServer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsAddServer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.tsAddServer.Image = ((System.Drawing.Image)(resources.GetObject("tsAddServer.Image")));
@@ -107,6 +106,7 @@ namespace Queueinator.Forms
             this.tsAddServer.Name = "tsAddServer";
             this.tsAddServer.Size = new System.Drawing.Size(23, 22);
             this.tsAddServer.Text = "tsAddServer";
+            this.tsAddServer.ToolTipText = "Adicionar novo server";
             // 
             // toolStripButton2
             // 
@@ -136,7 +136,7 @@ namespace Queueinator.Forms
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1096, 779);
+            this.tabControl1.Size = new System.Drawing.Size(1086, 779);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -144,7 +144,7 @@ namespace Queueinator.Forms
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1088, 751);
+            this.tabPage1.Size = new System.Drawing.Size(1078, 751);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;

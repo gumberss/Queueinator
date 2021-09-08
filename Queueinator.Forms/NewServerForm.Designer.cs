@@ -78,7 +78,7 @@ namespace Queueinator.Forms
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(236, 23);
-            this.txtPassword.TabIndex = 5;
+            this.txtPassword.TabIndex = 4;
             // 
             // label3
             // 
@@ -95,7 +95,7 @@ namespace Queueinator.Forms
             this.btnConnect.Location = new System.Drawing.Point(233, 179);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(92, 30);
-            this.btnConnect.TabIndex = 6;
+            this.btnConnect.TabIndex = 5;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
@@ -114,7 +114,7 @@ namespace Queueinator.Forms
             this.txtPort.Location = new System.Drawing.Point(263, 30);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(62, 23);
-            this.txtPort.TabIndex = 8;
+            this.txtPort.TabIndex = 2;
             // 
             // NewServerForm
             // 

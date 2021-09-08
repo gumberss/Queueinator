@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Queueinator.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using App = System.Windows.Forms.Application;
 
 namespace Queueinator.Forms
 {
@@ -17,9 +19,9 @@ namespace Queueinator.Forms
         [STAThread]
         static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            App.SetHighDpiMode(HighDpiMode.SystemAware);
+            App.EnableVisualStyles();
+            App.SetCompatibleTextRenderingDefault(false);
 
             var services = new ServiceCollection();
 
@@ -28,13 +30,14 @@ namespace Queueinator.Forms
             using (ServiceProvider sp = services.BuildServiceProvider())
             {
                 var form1 = sp.GetRequiredService<Form1>();
-                Application.Run(form1);
+                App.Run(form1);
             }
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(typeof(AppModule));
             services.AddScoped<Form1>();
             services.AddScoped<NewServerForm>();
         }
