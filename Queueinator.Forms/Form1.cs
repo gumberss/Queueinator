@@ -19,7 +19,8 @@ namespace Queueinator.Forms
             InitializeComponent();
 
             tsAddServer.Click += tsAddServer_Click;
-            serverTreeView.NodeMouseDoubleClick += LoadQueues_TreeNodeDoubleClick;
+            serverTreeView.NodeMouseDoubleClick += On_TreeViewNode_DoubleClick;
+            serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
             _newServerForm = newServerForm;
             _mediator = mediator;
         }
@@ -67,7 +68,7 @@ namespace Queueinator.Forms
             }
         }
 
-        private async void LoadQueues_TreeNodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private async void On_TreeViewNode_DoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (_virtualHosts.ContainsKey(e.Node.Name))
             {
@@ -89,30 +90,40 @@ namespace Queueinator.Forms
                     return;
                 }
 
+                //clear(node and _queues), then load
+
                 LoadNode(host.Node, queues.Value.ToList());
-            }else if (_queues.ContainsKey(e.Node.Name))
-            {
             }
         }
 
+        private void On_TreeViewNode_Click(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (_queues.ContainsKey(e.Node.Name))
+            {
+                //var messages = _mediator.Send(new LoadMessages());
+            }
+        }
+
+
         private void LoadNode(TreeNode parentNode, List<HostQueue> queues, int depth = 0)
         {
+
             if (!queues.Any()) return;
 
-            char queueNameSeparator = '-';
+            char[] queueNameSeparator = new[] { '-', '.' };
 
             var groupedQueues = queues.GroupBy(x => x.Name.Split(queueNameSeparator)[depth]);
 
             foreach (var item in groupedQueues)
             {
-                var lastNodeItems = item.Where(x => x.Name.Count(y => y == queueNameSeparator) == depth);
+                var lastNodeItems = item.Where(x => x.Name.Count(y => queueNameSeparator.Contains(y)) == depth);
 
                 var newItems = item.Except(lastNodeItems).ToList();
 
                 if (!newItems.Any())
                 {
                     var lastQueue = lastNodeItems.First();
-                    var queueNode = AddNode(parentNode, lastQueue.Name, $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}" );
+                    var queueNode = AddNode(parentNode, lastQueue.Name, $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}");
                     _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode));
                 }
                 else
