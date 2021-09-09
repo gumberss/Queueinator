@@ -23,6 +23,8 @@ namespace Queueinator.Forms.Controls
         public QueueControl(IMediator mediator, QueueTree queueTree)
         {
             InitializeComponent();
+            this.Dock = DockStyle.Fill;
+
             _mediator = mediator;
             _queueTree = queueTree;
 
@@ -51,6 +53,7 @@ namespace Queueinator.Forms.Controls
             messagesGrid.Columns.Add("Id", "Id");
             messagesGrid.Columns.Add("Bytes", "Bytes");
             messagesGrid.Columns.Add("Payload", "Payload");
+            messagesGrid.Columns[2].Width = 500;
 
             foreach (var message in messages.Value)
             {
