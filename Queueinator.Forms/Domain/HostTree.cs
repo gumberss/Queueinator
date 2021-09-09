@@ -5,14 +5,17 @@ namespace Queueinator.Forms.Domain
 {
     public class HostTree
     {
-        public VirtualHost Host { get; set; }
+        public VirtualHost Host { get; }
 
-        public TreeNode Node { get; set; }
+        public TreeNode Node { get; }
 
-        public HostTree(VirtualHost host, TreeNode node)
+        public ServerTree Server { get; }
+
+        public HostTree(VirtualHost host, TreeNode node, ServerTree server)
         {
             Host = host;
             Node = node;
+            Server = server;
         }
     }
 }

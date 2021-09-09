@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Queueinator.Application.Features.LoadQueues;
 using Queueinator.Domain.RabbitMq;
+using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Queueinator.Forms
             serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
             _newServerForm = newServerForm;
             _mediator = mediator;
+
+
         }
 
         private void tsAddServer_Click(object sender, EventArgs e)
@@ -46,7 +49,8 @@ namespace Queueinator.Forms
 
                 var serverNode = serverTreeView.Nodes.Add(newServer.Name, newServer.Name);
 
-                _servers.Add(newServer.Name, new ServerTree(newServer, serverNode));
+                var serverTree = new ServerTree(newServer, serverNode);
+                _servers.Add(newServer.Name, serverTree);
 
                 foreach (var host in newServer.Hosts)
                 {
@@ -54,7 +58,7 @@ namespace Queueinator.Forms
 
                     var hostNode = serverNode.Nodes.Add(host.Name, host.Name);
 
-                    _virtualHosts.Add(host.Name, new HostTree(host, hostNode));
+                    _virtualHosts.Add(host.Name, new HostTree(host, hostNode, serverTree));
                 }
 
             }
@@ -100,6 +104,9 @@ namespace Queueinator.Forms
         {
             if (_queues.ContainsKey(e.Node.Name))
             {
+                var page = new TabPage(e.Node.Name);
+                tabControl.TabPages.Add(page);
+                page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]));
                 //var messages = _mediator.Send(new LoadMessages());
             }
         }
@@ -124,7 +131,9 @@ namespace Queueinator.Forms
                 {
                     var lastQueue = lastNodeItems.First();
                     var queueNode = AddNode(parentNode, lastQueue.Name, $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}");
-                    _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode));
+
+                    if (!_queues.ContainsKey(queueNode.Name))
+                        _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, _virtualHosts[lastQueue.VirtualHostName]));
                 }
                 else
                 {
