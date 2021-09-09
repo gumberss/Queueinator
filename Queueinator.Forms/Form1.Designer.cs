@@ -38,7 +38,7 @@ namespace Queueinator.Forms
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsAddServer = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.treeViewQueues = new System.Windows.Forms.TreeView();
+            this.serverTreeView = new System.Windows.Forms.TreeView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
@@ -75,7 +75,7 @@ namespace Queueinator.Forms
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Panel1.Controls.Add(this.treeViewQueues);
+            this.splitContainer1.Panel1.Controls.Add(this.serverTreeView);
             // 
             // splitContainer1.Panel2
             // 
@@ -119,13 +119,13 @@ namespace Queueinator.Forms
             // 
             // treeViewQueues
             // 
-            this.treeViewQueues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.serverTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewQueues.Location = new System.Drawing.Point(3, 28);
-            this.treeViewQueues.Name = "treeViewQueues";
-            this.treeViewQueues.Size = new System.Drawing.Size(220, 763);
-            this.treeViewQueues.TabIndex = 0;
+            this.serverTreeView.Location = new System.Drawing.Point(3, 28);
+            this.serverTreeView.Name = "treeViewQueues";
+            this.serverTreeView.Size = new System.Drawing.Size(220, 763);
+            this.serverTreeView.TabIndex = 0;
             // 
             // tabControl1
             // 
@@ -179,7 +179,7 @@ namespace Queueinator.Forms
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuFile;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeViewQueues;
+        private System.Windows.Forms.TreeView serverTreeView;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton tsAddServer;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
