@@ -97,6 +97,8 @@ namespace Queueinator.Forms
                 //clear(node and _queues), then load
 
                 LoadNode(host.Node, queues.Value.ToList());
+
+                host.Node.Expand();
             }
         }
 
@@ -104,9 +106,26 @@ namespace Queueinator.Forms
         {
             if (_queues.ContainsKey(e.Node.Name))
             {
-                var page = new TabPage(e.Node.Name);
-                tabControl.TabPages.Add(page);
-                page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]));
+                TabPage page = null;
+
+                foreach (TabPage existentPage in tabControl.TabPages)
+                {
+                    if(existentPage.Text == e.Node.Name)
+                    {
+                        page = existentPage;
+                        break;
+                    }
+                }
+
+                if (page is null)
+                {
+                    page = new TabPage(e.Node.Name);
+                    tabControl.TabPages.Add(page);
+                    page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]));
+                }
+
+                tabControl.SelectTab(page);
+
                 //var messages = _mediator.Send(new LoadMessages());
             }
         }
