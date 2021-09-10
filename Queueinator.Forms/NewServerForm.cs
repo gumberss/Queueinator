@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Queueinator.Application.Features.Connections;
 using Queueinator.Domain.RabbitMq;
+using Queueinator.Forms.Extensions;
 
 namespace Queueinator.Forms
 {
@@ -19,20 +20,25 @@ namespace Queueinator.Forms
         {
             InitializeComponent();
             _mediator = mediator;
+
+            txtServer.PlaceholderText = "localhost";
+            txtPort.PlaceholderText = "15672";
+            txtUser.PlaceholderText = "guest";
+            txtPassword.PlaceholderText = "guest";
         }
 
         public Server Server { get; private set; }
 
         private async void btnConnect_Click(object sender, EventArgs e)
         {
-            if (txtServer.Text != "")
+            try
             {
                 var server = await _mediator.Send(new ConnectCommand()
                 {
-                    Server = txtServer.Text,
-                    Port = txtPort.Text,
-                    User = txtUser.Text,
-                    Password = txtPassword.Text
+                    Server = txtServer.Text.Default(txtServer.PlaceholderText),
+                    Port = txtPort.Text.Default(txtPort.PlaceholderText),
+                    User = txtUser.Text.Default(txtUser.PlaceholderText),
+                    Password = txtPassword.Text.Default(txtPassword.PlaceholderText)
                 });
 
                 if (server.IsFailure)
@@ -46,10 +52,12 @@ namespace Queueinator.Forms
                     DialogResult = DialogResult.OK;
                 }
             }
-            else
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 DialogResult = DialogResult.Retry;
             }
+
         }
     }
 }
