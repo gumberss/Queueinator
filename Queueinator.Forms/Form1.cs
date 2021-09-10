@@ -110,7 +110,7 @@ namespace Queueinator.Forms
 
                 foreach (TabPage existentPage in tabControl.TabPages)
                 {
-                    if(existentPage.Text == e.Node.Name)
+                    if (existentPage.Text == e.Node.Name)
                     {
                         page = existentPage;
                         break;
@@ -149,16 +149,35 @@ namespace Queueinator.Forms
                 if (!newItems.Any())
                 {
                     var lastQueue = lastNodeItems.First();
-                    var queueNode = AddNode(parentNode, lastQueue.Name, $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}");
+                    var text = $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}";
 
-                    if (!_queues.ContainsKey(queueNode.Name))
+                    if (!_queues.ContainsKey(lastQueue.Name))
+                    {
+                        var queueNode = AddNode(parentNode, lastQueue.Name, text);
                         _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, _virtualHosts[lastQueue.VirtualHostName]));
+                    }
+                    else
+                    {
+                        var node = parentNode.Nodes.Find(lastQueue.Name, false)[0];
+                        node.Text = text;
+                    }
                 }
                 else
                 {
                     var text = $"{item.Key} ({item.Sum(x => x.MessagesReadyCount)})";
 
-                    var newParent = AddNode(parentNode, item.Key, text);
+                    TreeNode newParent;
+
+                    if (parentNode.Nodes.ContainsKey(item.Key))
+                    {
+                        newParent = parentNode.Nodes.Find(item.Key, false)[0];
+                        newParent.Text = text;
+
+                    }
+                    else
+                    {
+                        newParent = AddNode(parentNode, item.Key, text);
+                    }
 
                     LoadNode(newParent, newItems, depth + 1);
                 }

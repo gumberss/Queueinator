@@ -7,14 +7,11 @@ namespace Queueinator.Forms.Domain
     {
         public QueueMessage Message { get; }
 
-        public TreeNode Node { get; }
+        public QueueTree Queue { get; }
 
-        public HostQueue Queue { get; }
-
-        public MessageTree(QueueMessage message, TreeNode node, HostQueue queue)
+        public MessageTree(QueueMessage message, QueueTree queue)
         {
             Message = message;
-            Node = node;
             Queue = queue;
         }
     }

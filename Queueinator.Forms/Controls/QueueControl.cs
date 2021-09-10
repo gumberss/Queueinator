@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,8 +18,7 @@ namespace Queueinator.Forms.Controls
     {
         private readonly IMediator _mediator;
         private readonly QueueTree _queueTree;
-
-        private Dictionary<String, MessageTree> _messages = new Dictionary<string, MessageTree>();
+        private Dictionary<Guid, MessageTree> _messages = new Dictionary<Guid, MessageTree>();
 
         public QueueControl(IMediator mediator, QueueTree queueTree)
         {
@@ -28,7 +28,37 @@ namespace Queueinator.Forms.Controls
             _mediator = mediator;
             _queueTree = queueTree;
 
+            tabControl1.TabPages[0].Text = "Payload";
+            tabControl1.TabPages[1].Text = "Details";
+
+
+            messagesGrid.SelectionChanged += On_Change_Row_selection;
+
             LoadMessages().ConfigureAwait(false);
+        }
+
+        private void On_Change_Row_selection(object sender, EventArgs e)
+        {
+            if (messagesGrid.SelectedCells.Count == 0) return;
+
+            var selectedRow = messagesGrid.Rows[messagesGrid.SelectedCells[0].RowIndex];
+
+            var id = selectedRow.Cells[0].Value;
+
+            var message = _messages[(Guid)id];
+
+            txtMessage.Text = message.Message.Payload;
+
+            var payload = message.Message.Payload;
+
+            message.Message.Payload = "Tab Payload";
+
+            txtDetails.Text = JsonSerializer.Serialize(message.Message, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            });
+
+            message.Message.Payload = payload;
         }
 
         private async Task LoadMessages()
@@ -59,6 +89,9 @@ namespace Queueinator.Forms.Controls
             {
                 try
                 {
+                    var messageTree = new MessageTree(message, _queueTree);
+                    _messages.Add(message.Properties.Id, messageTree);
+
                     messagesGrid.Rows.Add(message.Properties.Id, message.Bytes, message.Payload);
                 }
                 catch (Exception ex)
