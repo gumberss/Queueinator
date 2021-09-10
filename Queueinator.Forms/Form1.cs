@@ -5,6 +5,7 @@ using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -22,10 +23,28 @@ namespace Queueinator.Forms
             tsAddServer.Click += tsAddServer_Click;
             serverTreeView.NodeMouseDoubleClick += On_TreeViewNode_DoubleClick;
             serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
+            serverTreeView.AfterCollapse += On_after_colapse_treeView;
+            serverTreeView.AfterExpand += On_after_expand_treeView;
             _newServerForm = newServerForm;
             _mediator = mediator;
 
+            serverTreeView.ImageList = new ImageList();
+            serverTreeView.ImageList.Images.Add(Image.FromFile("Images/closed_folder.png"));
+            serverTreeView.ImageList.Images.Add(Image.FromFile("Images/opened_folder.png"));
+            serverTreeView.ImageList.Images.Add(Image.FromFile("Images/messages.png"));
+            serverTreeView.ImageList.Images.Add(Image.FromFile("Images/message.png"));
+        }
 
+        private void On_after_colapse_treeView(object sender, TreeViewEventArgs e)
+        {
+            e.Node.ImageIndex = 0;
+            e.Node.SelectedImageIndex = 0;
+        }
+
+        private void On_after_expand_treeView(object sender, TreeViewEventArgs e)
+        {
+            e.Node.ImageIndex = 1;
+            e.Node.SelectedImageIndex = 1;
         }
 
         private void tsAddServer_Click(object sender, EventArgs e)
@@ -153,7 +172,7 @@ namespace Queueinator.Forms
 
                     if (!_queues.ContainsKey(lastQueue.Name))
                     {
-                        var queueNode = AddNode(parentNode, lastQueue.Name, text);
+                        var queueNode = AddNode(parentNode, lastQueue.Name, text, 2, 2);
                         _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, _virtualHosts[lastQueue.VirtualHostName]));
                     }
                     else
@@ -172,11 +191,10 @@ namespace Queueinator.Forms
                     {
                         newParent = parentNode.Nodes.Find(item.Key, false)[0];
                         newParent.Text = text;
-
                     }
                     else
                     {
-                        newParent = AddNode(parentNode, item.Key, text);
+                        newParent = AddNode(parentNode, item.Key, text, 0, 0);
                     }
 
                     LoadNode(newParent, newItems, depth + 1);
@@ -184,9 +202,20 @@ namespace Queueinator.Forms
             }
         }
 
-        private TreeNode AddNode(TreeNode node, string name, string text)
+        private TreeNode AddNode(TreeNode node, string name, string text, int imageIndex, int selectedImageIndex)
         {
-            return node.Nodes.Add(name, text);
+            var treeNode = new TreeNode()
+            {
+                Name = name,
+                Text = text,
+                ImageIndex = imageIndex,
+                SelectedImageIndex = selectedImageIndex
+            };
+
+
+            node.Nodes.Add(treeNode);
+
+            return treeNode;
         }
 
 

@@ -136,7 +136,7 @@ namespace Queueinator.Forms
             this.tabControl.Location = new System.Drawing.Point(-1, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1120, 791);
+            this.tabControl.Size = new System.Drawing.Size(1115, 791);
             this.tabControl.TabIndex = 0;
             // 
             // Form1
