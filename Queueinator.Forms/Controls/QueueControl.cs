@@ -45,6 +45,8 @@ namespace Queueinator.Forms.Controls
 
             var id = selectedRow.Cells[0].Value;
 
+            if (id is null) return;
+
             var message = _messages[(Guid)id];
 
             txtMessage.Text = message.Message.Payload;
@@ -92,14 +94,21 @@ namespace Queueinator.Forms.Controls
                     var messageTree = new MessageTree(message, _queueTree);
                     _messages.Add(message.Properties.Id, messageTree);
 
-                    messagesGrid.Rows.Add(message.Properties.Id, message.Bytes, message.Payload);
-                }
+                    var row = new DataGridViewRow()
+                    {
+                        ReadOnly = true,
+                    };
+                    row.Cells.Add(new DataGridViewTextBoxCell(){ Value = message.Properties.Id});
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Bytes });
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Payload });
+                    messagesGrid.Rows.Add(row);
+            }
                 catch (Exception ex)
-                {
-
-                }
+            {
 
             }
+
         }
     }
+}
 }

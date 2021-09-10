@@ -212,12 +212,9 @@ namespace Queueinator.Forms
                 SelectedImageIndex = selectedImageIndex
             };
 
-
             node.Nodes.Add(treeNode);
 
             return treeNode;
         }
-
-
     }
 }
