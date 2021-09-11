@@ -105,7 +105,7 @@ namespace Queueinator.Forms.Controls
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1089, 421);
+            this.tabControl1.Size = new System.Drawing.Size(1089, 393);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -114,7 +114,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1081, 393);
+            this.tabPage1.Size = new System.Drawing.Size(1081, 365);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -131,7 +131,7 @@ namespace Queueinator.Forms.Controls
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.ReadOnly = true;
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessage.Size = new System.Drawing.Size(1075, 387);
+            this.txtMessage.Size = new System.Drawing.Size(1075, 359);
             this.txtMessage.TabIndex = 0;
             // 
             // tabPage2
@@ -140,7 +140,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1081, 393);
+            this.tabPage2.Size = new System.Drawing.Size(1081, 365);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -157,7 +157,7 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Name = "txtDetails";
             this.txtDetails.ReadOnly = true;
             this.txtDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDetails.Size = new System.Drawing.Size(1075, 387);
+            this.txtDetails.Size = new System.Drawing.Size(1075, 359);
             this.txtDetails.TabIndex = 0;
             // 
             // splitContainer1

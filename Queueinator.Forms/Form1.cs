@@ -46,7 +46,9 @@ namespace Queueinator.Forms
 
         private void SaveServers()
         {
-            var data = JsonSerializer.Serialize(_servers.Select(x => x.Value.Server));
+            var data = JsonSerializer.Serialize(_servers
+                .Select(x => x.Value.Server)
+                .Where(x => x.CanSave));
 
             if (!Directory.Exists("./db")) Directory.CreateDirectory("./db");
 

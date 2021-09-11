@@ -15,6 +15,8 @@ namespace Queueinator.Domain.RabbitMq
         public string User { get; set; }
         public string Password { get; set; }
 
+        public bool CanSave { get; set; }
+
         public List<VirtualHost> Hosts { get; set; }
 
         public void AddHosts(List<VirtualHost> hosts)

@@ -38,6 +38,7 @@ namespace Queueinator.Forms
             this.btnConnect = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
+            this.cbCanSave = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -116,11 +117,22 @@ namespace Queueinator.Forms
             this.txtPort.Size = new System.Drawing.Size(62, 23);
             this.txtPort.TabIndex = 2;
             // 
+            // cbCanSave
+            // 
+            this.cbCanSave.AutoSize = true;
+            this.cbCanSave.Location = new System.Drawing.Point(25, 170);
+            this.cbCanSave.Name = "cbCanSave";
+            this.cbCanSave.Size = new System.Drawing.Size(97, 19);
+            this.cbCanSave.TabIndex = 8;
+            this.cbCanSave.Text = "Save (Unsafe)";
+            this.cbCanSave.UseVisualStyleBackColor = true;
+            // 
             // NewServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(351, 221);
+            this.Controls.Add(this.cbCanSave);
             this.Controls.Add(this.txtPort);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.btnConnect);
@@ -149,5 +161,6 @@ namespace Queueinator.Forms
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtPort;
+        private System.Windows.Forms.CheckBox cbCanSave;
     }
 }

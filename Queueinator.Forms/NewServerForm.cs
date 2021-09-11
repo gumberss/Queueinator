@@ -49,7 +49,9 @@ namespace Queueinator.Forms
                 else
                 {
                     Server = server.Value;
+                    Server.CanSave = cbCanSave.Checked;
                     DialogResult = DialogResult.OK;
+                    cbCanSave.Checked = false;
                 }
             }
             catch (Exception ex)
