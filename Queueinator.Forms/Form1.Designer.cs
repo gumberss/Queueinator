@@ -75,6 +75,7 @@ namespace Queueinator.Forms
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
             this.splitContainer1.Panel1.Controls.Add(this.serverTreeView);
             // 
@@ -127,7 +128,7 @@ namespace Queueinator.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverTreeView.Location = new System.Drawing.Point(3, 28);
             this.serverTreeView.Name = "serverTreeView";
-            this.serverTreeView.Size = new System.Drawing.Size(220, 763);
+            this.serverTreeView.Size = new System.Drawing.Size(215, 763);
             this.serverTreeView.TabIndex = 0;
             // 
             // tabControl
@@ -138,7 +139,7 @@ namespace Queueinator.Forms
             this.tabControl.Location = new System.Drawing.Point(-1, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1121, 791);
+            this.tabControl.Size = new System.Drawing.Size(1126, 791);
             this.tabControl.TabIndex = 0;
             // 
             // Form1

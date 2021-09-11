@@ -118,17 +118,17 @@ namespace Queueinator.Forms
 
             foreach (var host in newServer.Hosts)
             {
-                if (_servers.ContainsKey(host.Name)) continue;
+                if (_virtualHosts.ContainsKey($"{newServer.Name}:{host.Name}")) continue;
 
-                var hostNode = serverNode.Nodes.Add(host.Name, host.Name);
+                var hostNode = serverNode.Nodes.Add($"{newServer.Name}:{host.Name}", host.Name);
 
-                _virtualHosts.Add(host.Name, new HostTree(host, hostNode, serverTree));
+                _virtualHosts.Add($"{newServer.Name}:{host.Name}", new HostTree(host, hostNode, serverTree));
             }
         }
 
         private async void On_TreeViewNode_DoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (_virtualHosts.ContainsKey(e.Node.Name))
+            if (_virtualHosts.ContainsKey($"{e.Node.Name}"))
             {
                 var host = _virtualHosts[e.Node.Name];
                 var serverNode = _servers[host.Node.Parent.Name];
@@ -148,7 +148,7 @@ namespace Queueinator.Forms
                     return;
                 }
 
-                LoadNode(host.Node, queues.Value.ToList());
+                LoadNode(host.Node, queues.Value.ToList(), host);
 
                 host.Node.Expand();
             }
@@ -198,7 +198,7 @@ namespace Queueinator.Forms
         }
 
 
-        private void LoadNode(TreeNode parentNode, List<HostQueue> queues, int depth = 0)
+        private void LoadNode(TreeNode parentNode, List<HostQueue> queues, HostTree host, int depth = 0)
         {
 
             if (!queues.Any()) return;
@@ -221,7 +221,7 @@ namespace Queueinator.Forms
                     if (!_queues.ContainsKey(lastQueue.Name))
                     {
                         var queueNode = AddNode(parentNode, lastQueue.Name, text, 2, 2);
-                        _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, _virtualHosts[lastQueue.VirtualHostName]));
+                        _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, host));
                     }
                     else
                     {
@@ -245,7 +245,7 @@ namespace Queueinator.Forms
                         newParent = AddNode(parentNode, item.Key, text, 0, 0);
                     }
 
-                    LoadNode(newParent, newItems, depth + 1);
+                    LoadNode(newParent, newItems, host, depth + 1);
                 }
             }
         }
