@@ -158,8 +158,7 @@ namespace Queueinator.Forms
 
         private void On_tabControl_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button != System.Windows.Forms.MouseButtons.Middle)
-                return;
+            if (e.Button != MouseButtons.Middle) return;
 
             for (int i = 0; i < tabControl.TabPages.Count; i++)
             {

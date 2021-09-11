@@ -3,11 +3,6 @@ using Queueinator.Application.Features.LoadMessages;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -55,9 +50,9 @@ namespace Queueinator.Forms.Controls
 
             var message = _messages[(Guid)id];
 
-            txtMessage.Text = message.Message.Payload;
-
             var payload = message.Message.Payload;
+
+            txtMessage.Text = payload;
 
             message.Message.Payload = "Tab Payload";
 
@@ -109,7 +104,6 @@ namespace Queueinator.Forms.Controls
                 {
                     MessageBox.Show("Error", ex.Message);
                 }
-
             }
         }
 
