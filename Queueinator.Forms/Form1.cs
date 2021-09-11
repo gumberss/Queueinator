@@ -6,13 +6,15 @@ using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace Queueinator.Forms
 {
     public partial class Form1 : Form
-    {s
+    {
         private NewServerForm _newServerForm;
         private IMediator _mediator;
 
@@ -27,7 +29,7 @@ namespace Queueinator.Forms
             serverTreeView.AfterExpand += On_after_expand_treeView;
 
             tabControl.MouseDown += On_tabControl_MouseDown;
-
+            this.FormClosed += On_FormClosed;
             _newServerForm = newServerForm;
             _mediator = mediator;
 
@@ -36,6 +38,31 @@ namespace Queueinator.Forms
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/opened_folder.png"));
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/messages.png"));
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/message.png"));
+
+            LoadServers();
+        }
+
+        private void On_FormClosed(object sender, FormClosedEventArgs e) => SaveServers();
+
+        private void SaveServers()
+        {
+            var data = JsonSerializer.Serialize(_servers.Select(x => x.Value.Server));
+
+            if (!Directory.Exists("./db")) Directory.CreateDirectory("./db");
+
+            File.WriteAllText("./db/servers.json", data);
+        }
+
+        private void LoadServers()
+        {
+            if (File.Exists("./db/servers.json"))
+            {
+                var data = File.ReadAllText("./db/servers.json");
+
+                var servers = JsonSerializer.Deserialize<IEnumerable<Server>>(data);
+
+                foreach (var server in servers) LoadServerOnTreeView(server, serverTreeView);
+            }
         }
 
         private void On_after_colapse_treeView(object sender, TreeViewEventArgs e)
@@ -67,21 +94,7 @@ namespace Queueinator.Forms
             {
                 var newServer = newServerPopup.Server;
 
-                if (_servers.ContainsKey(newServer.Name)) return;
-
-                var serverNode = serverTreeView.Nodes.Add(newServer.Name, newServer.Name);
-
-                var serverTree = new ServerTree(newServer, serverNode);
-                _servers.Add(newServer.Name, serverTree);
-
-                foreach (var host in newServer.Hosts)
-                {
-                    if (_servers.ContainsKey(host.Name)) continue;
-
-                    var hostNode = serverNode.Nodes.Add(host.Name, host.Name);
-
-                    _virtualHosts.Add(host.Name, new HostTree(host, hostNode, serverTree));
-                }
+                LoadServerOnTreeView(newServer, serverTreeView);
 
             }
             else if (dialogResult == DialogResult.Retry)
@@ -91,6 +104,25 @@ namespace Queueinator.Forms
             else if (dialogResult == DialogResult.Cancel)
             {
 
+            }
+        }
+
+        private void LoadServerOnTreeView(Server newServer, TreeView treeView)
+        {
+            if (_servers.ContainsKey(newServer.Name)) return;
+
+            var serverNode = treeView.Nodes.Add(newServer.Name, newServer.Name);
+
+            var serverTree = new ServerTree(newServer, serverNode);
+            _servers.Add(newServer.Name, serverTree);
+
+            foreach (var host in newServer.Hosts)
+            {
+                if (_servers.ContainsKey(host.Name)) continue;
+
+                var hostNode = serverNode.Nodes.Add(host.Name, host.Name);
+
+                _virtualHosts.Add(host.Name, new HostTree(host, hostNode, serverTree));
             }
         }
 
