@@ -100,18 +100,18 @@ namespace Queueinator.Forms.Controls
                     {
                         ReadOnly = true,
                     };
-                    row.Cells.Add(new DataGridViewTextBoxCell(){ Value = message.Properties.Id});
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Properties.Id });
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Bytes });
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Payload });
                     messagesGrid.Rows.Add(row);
-            }
+                }
                 catch (Exception ex)
-            {
+                {
                     MessageBox.Show("Error", ex.Message);
-            }
+                }
 
+            }
         }
-    }
 
         private void On_reload_messages_clicked(object sender, EventArgs e)
         {
