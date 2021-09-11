@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Queueinator.Forms
 {
     public partial class Form1 : Form
-    {
+    {s
         private NewServerForm _newServerForm;
         private IMediator _mediator;
 
@@ -25,6 +25,9 @@ namespace Queueinator.Forms
             serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
             serverTreeView.AfterCollapse += On_after_colapse_treeView;
             serverTreeView.AfterExpand += On_after_expand_treeView;
+
+            tabControl.MouseDown += On_tabControl_MouseDown;
+
             _newServerForm = newServerForm;
             _mediator = mediator;
 
@@ -113,11 +116,24 @@ namespace Queueinator.Forms
                     return;
                 }
 
-                //clear(node and _queues), then load
-
                 LoadNode(host.Node, queues.Value.ToList());
 
                 host.Node.Expand();
+            }
+        }
+
+        private void On_tabControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != System.Windows.Forms.MouseButtons.Middle)
+                return;
+
+            for (int i = 0; i < tabControl.TabPages.Count; i++)
+            {
+                if (this.tabControl.GetTabRect(i).Contains(e.Location))
+                {
+                    this.tabControl.TabPages.RemoveAt(i);
+                    return;
+                }
             }
         }
 

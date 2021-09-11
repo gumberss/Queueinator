@@ -31,7 +31,6 @@ namespace Queueinator.Forms.Controls
             tabControl1.TabPages[0].Text = "Payload";
             tabControl1.TabPages[1].Text = "Details";
 
-
             messagesGrid.SelectionChanged += On_Change_Row_selection;
 
             LoadMessages().ConfigureAwait(false);
