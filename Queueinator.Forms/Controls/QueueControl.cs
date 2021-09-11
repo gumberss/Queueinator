@@ -31,9 +31,16 @@ namespace Queueinator.Forms.Controls
             tabControl1.TabPages[0].Text = "Payload";
             tabControl1.TabPages[1].Text = "Details";
 
+            messagesGrid.Columns.Add("Id", "Id");
+            messagesGrid.Columns.Add("Bytes", "Bytes");
+            messagesGrid.Columns.Add("Payload", "Payload");
+            messagesGrid.Columns[2].Width = 500;
+
             messagesGrid.SelectionChanged += On_Change_Row_selection;
 
             LoadMessages().ConfigureAwait(false);
+
+            btnReload.Click += On_reload_messages_clicked;
         }
 
         private void On_Change_Row_selection(object sender, EventArgs e)
@@ -81,10 +88,6 @@ namespace Queueinator.Forms.Controls
                 MessageBox.Show("Falha ao carregar as mensagens");
                 return;
             }
-            messagesGrid.Columns.Add("Id", "Id");
-            messagesGrid.Columns.Add("Bytes", "Bytes");
-            messagesGrid.Columns.Add("Payload", "Payload");
-            messagesGrid.Columns[2].Width = 500;
 
             foreach (var message in messages.Value)
             {
@@ -104,10 +107,18 @@ namespace Queueinator.Forms.Controls
             }
                 catch (Exception ex)
             {
-
+                    MessageBox.Show("Error", ex.Message);
             }
 
         }
     }
-}
+
+        private void On_reload_messages_clicked(object sender, EventArgs e)
+        {
+            messagesGrid.Rows.Clear();
+            _messages.Clear();
+
+            LoadMessages().ConfigureAwait(false);
+        }
+    }
 }

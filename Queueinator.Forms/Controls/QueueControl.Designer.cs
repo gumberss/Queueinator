@@ -32,8 +32,10 @@ namespace Queueinator.Forms.Controls
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QueueControl));
             this.messagesGrid = new System.Windows.Forms.DataGridView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnReload = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -41,6 +43,7 @@ namespace Queueinator.Forms.Controls
             this.txtDetails = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.messagesGrid)).BeginInit();
+            this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -88,12 +91,23 @@ namespace Queueinator.Forms.Controls
             // 
             // toolStrip1
             // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnReload});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1095, 25);
             this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btnReload
+            // 
+            this.btnReload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnReload.Image = ((System.Drawing.Image)(resources.GetObject("btnReload.Image")));
+            this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(23, 22);
+            this.btnReload.Text = "Refresh";
             // 
             // tabControl1
             // 
@@ -105,7 +119,7 @@ namespace Queueinator.Forms.Controls
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1089, 393);
+            this.tabControl1.Size = new System.Drawing.Size(1089, 441);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -114,7 +128,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1081, 365);
+            this.tabPage1.Size = new System.Drawing.Size(1081, 413);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -131,7 +145,7 @@ namespace Queueinator.Forms.Controls
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.ReadOnly = true;
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessage.Size = new System.Drawing.Size(1075, 359);
+            this.txtMessage.Size = new System.Drawing.Size(1075, 407);
             this.txtMessage.TabIndex = 0;
             // 
             // tabPage2
@@ -140,7 +154,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1081, 365);
+            this.tabPage2.Size = new System.Drawing.Size(1081, 413);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -157,7 +171,7 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Name = "txtDetails";
             this.txtDetails.ReadOnly = true;
             this.txtDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDetails.Size = new System.Drawing.Size(1075, 359);
+            this.txtDetails.Size = new System.Drawing.Size(1075, 407);
             this.txtDetails.TabIndex = 0;
             // 
             // splitContainer1
@@ -190,6 +204,8 @@ namespace Queueinator.Forms.Controls
             this.Name = "QueueControl";
             this.Size = new System.Drawing.Size(1095, 788);
             ((System.ComponentModel.ISupportInitialize)(this.messagesGrid)).EndInit();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -214,5 +230,6 @@ namespace Queueinator.Forms.Controls
         private System.Windows.Forms.TextBox txtMessage;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox txtDetails;
+        private System.Windows.Forms.ToolStripButton btnReload;
     }
 }
