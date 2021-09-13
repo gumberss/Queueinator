@@ -219,14 +219,14 @@ namespace Queueinator.Forms
                     var lastQueue = lastNodeItems.First();
                     var text = $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}";
 
-                    if (!_queues.ContainsKey(lastQueue.Name))
+                    if (!_queues.ContainsKey($"{host.FullName()}:{lastQueue.Name}"))
                     {
-                        var queueNode = AddNode(parentNode, lastQueue.Name, text, 2, 2);
-                        _queues.Add(queueNode.Name, new QueueTree(lastQueue, queueNode, host));
+                        var queueNode = AddNode(parentNode, $"{host.FullName()}:{lastQueue.Name}", text, 2, 2);
+                        _queues.Add($"{host.FullName()}:{lastQueue.Name}", new QueueTree(lastQueue, queueNode, host));
                     }
                     else
                     {
-                        var node = parentNode.Nodes.Find(lastQueue.Name, false)[0];
+                        var node = parentNode.Nodes.Find($"{host.FullName()}:{lastQueue.Name}", false)[0];
                         node.Text = text;
                     }
                 }

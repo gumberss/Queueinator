@@ -11,6 +11,11 @@ namespace Queueinator.Forms.Domain
 
         public ServerTree Server { get; }
 
+        public string FullName()
+        {
+            return $"{Server.Server.Name}:{this.Host.Name}";
+        }
+
         public HostTree(VirtualHost host, TreeNode node, ServerTree server)
         {
             Host = host;
