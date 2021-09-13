@@ -4,6 +4,7 @@ using Queueinator.Application.Features.PurgeQueue;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
+using Queueinator.Forms.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -139,10 +140,7 @@ namespace Queueinator.Forms
 
                 var queues = await _mediator.Send(new LoadQueuesCommand()
                 {
-                    Password = serverNode.Server.Password,
-                    Server = serverNode.Server.Name,
-                    Port = serverNode.Server.Port,
-                    User = serverNode.Server.User,
+                    Server = serverNode.Server,
                     VHost = host.Host.Name
                 });
 
@@ -152,10 +150,40 @@ namespace Queueinator.Forms
                     return;
                 }
 
-                LoadNode(host.Node, queues.Value.ToList(), host);
+                new LoadTreeNodesService().LoadNode(
+                    host.Node,
+                    queues.Value.ToList(),
+                    (queue, queueNode) => new QueueTree(queue, queueNode, host),
+                    (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
+                    (key, lastQueue) => $"{host.FullName()}:{lastQueue.Name}",
+                    ref _queues,
+                    lastNode =>
+                    {
+                        lastNode.ImageIndex = 2;
+                        lastNode.SelectedImageIndex = 2;
+                        lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
+                    }
+                );
 
                 host.Node.Expand();
             }
+        }
+
+        public ContextMenuStrip CreateContextMenuForQueues(String name)
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+
+            var toolStripItem = new ToolStripButton()
+            {
+                Text = "Purge",
+                Name = name,
+            };
+
+            toolStripItem.Click += On_Purge_Queue;
+
+            cms.Items.Add(toolStripItem);
+
+            return cms;
         }
 
         private void On_tabControl_MouseDown(object sender, MouseEventArgs e)
@@ -187,8 +215,6 @@ namespace Queueinator.Forms
                 }
 
                 tabControl.SelectTab(page);
-
-                //var messages = _mediator.Send(new LoadMessages());
             }
         }
 
@@ -206,87 +232,6 @@ namespace Queueinator.Forms
             }
 
             return page;
-        }
-
-        private void LoadNode(TreeNode parentNode, List<HostQueue> queues, HostTree host, int depth = 0)
-        {
-
-            if (!queues.Any()) return;
-
-            char[] queueNameSeparator = new[] { '-', '.' };
-
-            var groupedQueues = queues.GroupBy(x => x.Name.Split(queueNameSeparator)[depth]);
-
-            foreach (var item in groupedQueues)
-            {
-                var lastNodeItems = item.Where(x => x.Name.Count(y => queueNameSeparator.Contains(y)) == depth);
-
-                var newItems = item.Except(lastNodeItems).ToList();
-
-                if (!newItems.Any())
-                {
-                    var lastQueue = lastNodeItems.First();
-                    var text = $"{item.Key} ({lastQueue.MessagesReadyCount}) {lastQueue.State}";
-
-                    if (!_queues.ContainsKey($"{host.FullName()}:{lastQueue.Name}"))
-                    {
-                        var queueNode = AddNode(parentNode, $"{host.FullName()}:{lastQueue.Name}", text, 2, 2);
-                        _queues.Add($"{host.FullName()}:{lastQueue.Name}", new QueueTree(lastQueue, queueNode, host));
-                    }
-                    else
-                    {
-                        var node = parentNode.Nodes.Find($"{host.FullName()}:{lastQueue.Name}", false)[0];
-                        node.Text = text;
-                    }
-                }
-                else
-                {
-                    var text = $"{item.Key} ({item.Sum(x => x.MessagesReadyCount)})";
-
-                    TreeNode newParent;
-
-                    if (parentNode.Nodes.ContainsKey(item.Key))
-                    {
-                        newParent = parentNode.Nodes.Find(item.Key, false)[0];
-                        newParent.Text = text;
-                    }
-                    else
-                    {
-                        newParent = AddNode(parentNode, item.Key, text, 0, 0);
-                    }
-
-                    LoadNode(newParent, newItems, host, depth + 1);
-                }
-            }
-        }
-
-        private TreeNode AddNode(TreeNode node, string name, string text, int imageIndex, int selectedImageIndex)
-        {
-            var treeNode = new TreeNode()
-            {
-                Name = name,
-                Text = text,
-                ImageIndex = imageIndex,
-                SelectedImageIndex = selectedImageIndex
-            };
-
-            ContextMenuStrip cms = new ContextMenuStrip();
-
-            var toolStripItem = new ToolStripButton()
-            {
-                Text = "Purge",
-                Name = name
-            };
-
-            toolStripItem.Click += On_Purge_Queue;
-
-            cms.Items.Add(toolStripItem);
-
-            treeNode.ContextMenuStrip = cms;
-
-            node.Nodes.Add(treeNode);
-
-            return treeNode;
         }
 
         private void On_Purge_Queue(object sender, EventArgs e)
@@ -308,10 +253,7 @@ namespace Queueinator.Forms
 
                 var result = await _mediator.Send(new PurgeQueueCommand
                 {
-                    Server = server.Name,
-                    Port = server.Port,
-                    User = server.User,
-                    Password = server.Password,
+                    Server = server,
                     VHost = host.Name,
                     QueueName = queue.Queue.Name,
                 });
@@ -331,7 +273,7 @@ namespace Queueinator.Forms
                     .OfType<QueueControl>()
                     .ToList();
 
-                queueControls.ForEach(x => x.ReloadMessages());
+                queueControls.ForEach(x => x.ReloadMessages().ConfigureAwait(false));
             }
         }
     }

@@ -71,10 +71,7 @@ namespace Queueinator.Forms.Controls
             var messages = await _mediator.Send(new LoadMessagesCommand()
             {
                 HostName = _queueTree.Queue.VirtualHostName,
-                Server = server.Name,
-                Password = server.Password,
-                Port = server.Port,
-                User = server.User,
+                Server = server,
                 QueueName = _queueTree.Queue.Name
             });
 

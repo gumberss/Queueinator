@@ -13,10 +13,7 @@ namespace Queueinator.Application.Features.LoadMessages
 {
     public class LoadMessagesCommand : IRequest<Result<IEnumerable<QueueMessage>, BusinessException>>
     {
-        public string Server { get; set; }
-        public string Port { get; set; }
-        public string User { get; set; }
-        public string Password { get; set; }
+        public Server Server { get; set; }
 
         public string HostName { get; set; }
         public string QueueName { get; set; }
@@ -34,7 +31,7 @@ namespace Queueinator.Application.Features.LoadMessages
 
             var host = request.HostName == "/" ? "%2f" : request.HostName;
 
-            var url = $"http://{request.Server}:{request.Port}/api/queues/{host}/{request.QueueName}/get";
+            var url = $"http://{request.Server.Name}:{request.Server.Port}/api/queues/{host}/{request.QueueName}/get";
 
             using (var httpClient = new HttpClient())
             {
@@ -42,7 +39,7 @@ namespace Queueinator.Application.Features.LoadMessages
                 {
                     var body = @"{""count"":10000,""ackmode"":""ack_requeue_true"",""encoding"":""auto"",""truncate"":500000}";
 
-                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.User}:{request.Password}"));
+                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.Server.User}:{request.Server.Password}"));
                     htttpRequest.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
                     htttpRequest.Content = new StringContent(body);
 

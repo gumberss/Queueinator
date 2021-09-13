@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Queueinator.Domain.RabbitMq
 {
-    public class HostQueue
+    public class HostQueue : INode
     {
         [JsonPropertyName("name")]
         public String Name { get; set; }

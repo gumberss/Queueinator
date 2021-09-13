@@ -13,10 +13,7 @@ namespace Queueinator.Application.Features.LoadQueues
 {
     public class LoadQueuesCommand : IRequest<Result<IEnumerable<HostQueue>, BusinessException>>
     {
-        public string Server { get; set; }
-        public string Port { get; set; }
-        public string User { get; set; }
-        public string Password { get; set; }
+        public Server Server { get; set; }
         public string VHost { get; set; }
     }
 
@@ -31,13 +28,13 @@ namespace Queueinator.Application.Features.LoadQueues
 
             var host = request.VHost == "/" ? "%2f" : request.VHost;
 
-            var url = $"http://{request.Server}:{request.Port}/api/queues/{host}";
+            var url = $"http://{request.Server.Name}:{request.Server.Port}/api/queues/{host}";
 
             using (var httpClient = new HttpClient())
             {
                 using (var htttpRequest = new HttpRequestMessage(new HttpMethod("GET"), url))
                 {
-                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.User}:{request.Password}"));
+                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.Server.User}:{request.Server.Password}"));
                     htttpRequest.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
 
                     var response = await httpClient.SendAsync(htttpRequest);

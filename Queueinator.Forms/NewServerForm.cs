@@ -33,12 +33,17 @@ namespace Queueinator.Forms
         {
             try
             {
-                var server = await _mediator.Send(new ConnectCommand()
+                var serverData = new Server
                 {
-                    Server = txtServer.Text.Default(txtServer.PlaceholderText),
+                    Name = txtServer.Text.Default(txtServer.PlaceholderText),
                     Port = txtPort.Text.Default(txtPort.PlaceholderText),
                     User = txtUser.Text.Default(txtUser.PlaceholderText),
                     Password = txtPassword.Text.Default(txtPassword.PlaceholderText)
+                };
+
+                var server = await _mediator.Send(new ConnectCommand()
+                {
+                    Server = serverData
                 });
 
                 if (server.IsFailure)

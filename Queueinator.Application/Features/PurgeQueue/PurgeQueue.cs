@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
 using System;
 using System.Net.Http;
@@ -10,10 +11,8 @@ namespace Queueinator.Application.Features.PurgeQueue
 {
     public class PurgeQueueCommand : IRequest<Result<bool, BusinessException>>
     {
-        public string Server { get; set; }
-        public string Port { get; set; }
-        public string User { get; set; }
-        public string Password { get; set; }
+        public Server Server { get; set; }
+        
         public string VHost { get; set; }
         public string QueueName { get; set; }
     }
@@ -30,13 +29,13 @@ namespace Queueinator.Application.Features.PurgeQueue
 
             var host = request.VHost == "/" ? "%2f" : request.VHost;
 
-            var url = $"http://{request.Server}:{request.Port}/api/queues/{host}/{request.QueueName}/contents";
+            var url = $"http://{request.Server.Name}:{request.Server.Port}/api/queues/{host}/{request.QueueName}/contents";
 
             using (var httpClient = new HttpClient())
             {
                 using (var htttpRequest = new HttpRequestMessage(new HttpMethod("DELETE"), url))
                 {
-                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.User}:{request.Password}"));
+                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.Server.User}:{request.Server.Password}"));
                     htttpRequest.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
                     try
                     {
