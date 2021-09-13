@@ -139,7 +139,7 @@ namespace Queueinator.Forms
             this.tabControl.Location = new System.Drawing.Point(-1, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1126, 791);
+            this.tabControl.Size = new System.Drawing.Size(1121, 791);
             this.tabControl.TabIndex = 0;
             // 
             // Form1
@@ -150,6 +150,7 @@ namespace Queueinator.Forms
             this.ClientSize = new System.Drawing.Size(1358, 818);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

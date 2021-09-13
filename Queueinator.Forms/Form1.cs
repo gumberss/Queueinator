@@ -328,8 +328,7 @@ namespace Queueinator.Forms
 
                 var queueControls = queuePurgedPage.Controls
                     .Find(queue.Node.Name, false)
-                    .Where(x => (x is QueueControl))
-                    .Select(x => (x as QueueControl))
+                    .OfType<QueueControl>()
                     .ToList();
 
                 queueControls.ForEach(x => x.ReloadMessages());
