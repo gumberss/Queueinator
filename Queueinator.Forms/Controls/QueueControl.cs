@@ -109,10 +109,15 @@ namespace Queueinator.Forms.Controls
 
         private void On_reload_messages_clicked(object sender, EventArgs e)
         {
+            ReloadMessages().ConfigureAwait(false);
+        }
+
+        public async Task ReloadMessages()
+        {
             messagesGrid.Rows.Clear();
             _messages.Clear();
 
-            LoadMessages().ConfigureAwait(false);
+            await LoadMessages();
         }
     }
 }

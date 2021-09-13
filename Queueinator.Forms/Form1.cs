@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Queueinator.Application.Features.LoadQueues;
+using Queueinator.Application.Features.PurgeQueue;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Queueinator.Forms
@@ -174,22 +176,14 @@ namespace Queueinator.Forms
         {
             if (_queues.ContainsKey(e.Node.Name))
             {
-                TabPage page = null;
-
-                foreach (TabPage existentPage in tabControl.TabPages)
-                {
-                    if (existentPage.Text == e.Node.Name)
-                    {
-                        page = existentPage;
-                        break;
-                    }
-                }
+                TabPage page = GetPageByText(e.Node.Name);
 
                 if (page is null)
                 {
                     page = new TabPage(e.Node.Name);
+                    page.Name = e.Node.Name;
                     tabControl.TabPages.Add(page);
-                    page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]));
+                    page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]) { Name = e.Node.Name });
                 }
 
                 tabControl.SelectTab(page);
@@ -198,6 +192,21 @@ namespace Queueinator.Forms
             }
         }
 
+        private TabPage GetPageByText(String text)
+        {
+            TabPage page = null;
+
+            foreach (TabPage existentPage in tabControl.TabPages)
+            {
+                if (existentPage.Text == text)
+                {
+                    page = existentPage;
+                    break;
+                }
+            }
+
+            return page;
+        }
 
         private void LoadNode(TreeNode parentNode, List<HostQueue> queues, HostTree host, int depth = 0)
         {
@@ -261,9 +270,70 @@ namespace Queueinator.Forms
                 SelectedImageIndex = selectedImageIndex
             };
 
+            ContextMenuStrip cms = new ContextMenuStrip();
+
+            var toolStripItem = new ToolStripButton()
+            {
+                Text = "Purge",
+                Name = name
+            };
+
+            toolStripItem.Click += On_Purge_Queue;
+
+            cms.Items.Add(toolStripItem);
+
+            treeNode.ContextMenuStrip = cms;
+
             node.Nodes.Add(treeNode);
 
             return treeNode;
+        }
+
+        private void On_Purge_Queue(object sender, EventArgs e)
+        {
+            if ((sender is ToolStripItem toolStrip))
+            {
+                PurgeQueue(toolStrip.Name).ConfigureAwait(false);
+            }
+        }
+
+        private async Task PurgeQueue(String queueName)
+        {
+            var queue = _queues[queueName];
+
+            if (queue is not null)
+            {
+                var server = queue.Host.Server.Server;
+                var host = queue.Host.Host;
+
+                var result = await _mediator.Send(new PurgeQueueCommand
+                {
+                    Server = server.Name,
+                    Port = server.Port,
+                    User = server.User,
+                    Password = server.Password,
+                    VHost = host.Name,
+                    QueueName = queue.Queue.Name,
+                });
+
+                if (result.IsFailure)
+                {
+                    MessageBox.Show("Erro", result.Error.Message);
+                    return;
+                }
+
+                var queuePurgedPage = GetPageByText(queue.Node.Name);
+
+                if (queuePurgedPage is null) return;
+
+                var queueControls = queuePurgedPage.Controls
+                    .Find(queue.Node.Name, false)
+                    .Where(x => (x is QueueControl))
+                    .Select(x => (x as QueueControl))
+                    .ToList();
+
+                queueControls.ForEach(x => x.ReloadMessages());
+            }
         }
     }
 }
