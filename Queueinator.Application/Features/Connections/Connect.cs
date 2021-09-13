@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Queueinator.Application.Infra.Requests;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
 using System;
@@ -20,39 +21,26 @@ namespace Queueinator.Application.Features.Connections
     {
         public async Task<Result<Server, BusinessException>> Handle(ConnectCommand request, CancellationToken cancellationToken)
         {
-            //https://www.rabbitmq.com/uri-spec.html
-            //https://stackoverflow.com/questions/43332913/can-i-iterate-through-queues-using-the-rabbitmq-net-client
-            //https://stackoverflow.com/questions/33119611/how-to-make-rabbitmq-api-calls-with-vhost
-            //https://rawcdn.githack.com/rabbitmq/rabbitmq-management/v3.8.0/priv/www/api/index.html
-
-            var url = $"http://{request.Server.Name}:{request.Server.Port}/api/vhosts";
-
-            using (var httpClient = new HttpClient())
+            var connection = await Result.Try(async () =>
             {
-                using (var htttpRequest = new HttpRequestMessage(new HttpMethod("GET"), url))
+                var data = await RabbitRequestMessageCreator.Send("GET", "api/vhosts", request.Server);
+
+                var virtualHosts = JsonSerializer.Deserialize<VirtualHost[]>(data);
+
+                var connection = new Server()
                 {
-                    var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{request.Server.User}:{request.Server.Password}"));
-                    htttpRequest.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
+                    Name = request.Server.Name,
+                    Port = request.Server.Port,
+                    User = request.Server.User,
+                    Password = request.Server.Password,
+                };
 
-                    var response = await httpClient.SendAsync(htttpRequest);
+                connection.AddHosts(virtualHosts.ToList());
 
-                    var data = await response.Content.ReadAsStringAsync();
+                return connection;
+            });
 
-                    var virtualHosts = JsonSerializer.Deserialize<VirtualHost[]>(data);
-
-                    var connection = new Server()
-                    {
-                        Name = request.Server.Name,
-                        Port = request.Server.Port,
-                        User = request.Server.User,
-                        Password = request.Server.Password,
-                    };
-
-                    connection.AddHosts(virtualHosts.ToList());
-
-                    return connection;
-                }
-            }
+            return connection;
         }
     }
 }
