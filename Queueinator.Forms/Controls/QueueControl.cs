@@ -162,6 +162,8 @@ namespace Queueinator.Forms.Controls
                 Message = messageTree.Message
             });
 
+            if (result.IsFailure)
+                MessageBox.Show("It was not possible to publish the message", "Error");
         }
 
         private void On_reload_messages_clicked(object sender, EventArgs e)
