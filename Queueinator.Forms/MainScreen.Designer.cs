@@ -3,7 +3,7 @@ using System;
 
 namespace Queueinator.Forms
 {
-    partial class Form1
+    partial class MainScreen
     {
         /// <summary>
         ///  Required designer variable.
@@ -31,7 +31,7 @@ namespace Queueinator.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainScreen));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();

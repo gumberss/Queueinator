@@ -16,12 +16,12 @@ using System.Windows.Forms;
 
 namespace Queueinator.Forms
 {
-    public partial class Form1 : Form
+    public partial class MainScreen : Form
     {
         private NewServerForm _newServerForm;
         private IMediator _mediator;
 
-        public Form1(IMediator mediator, NewServerForm newServerForm)
+        public MainScreen(IMediator mediator, NewServerForm newServerForm)
         {
             InitializeComponent();
 

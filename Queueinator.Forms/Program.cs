@@ -29,7 +29,7 @@ namespace Queueinator.Forms
 
             using (ServiceProvider sp = services.BuildServiceProvider())
             {
-                var form1 = sp.GetRequiredService<Form1>();
+                var form1 = sp.GetRequiredService<MainScreen>();
                 App.Run(form1);
             }
         }
@@ -38,7 +38,7 @@ namespace Queueinator.Forms
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddMediatR(typeof(AppModule));
-            services.AddScoped<Form1>();
+            services.AddScoped<MainScreen>();
             services.AddScoped<NewServerForm>();
         }
     }
