@@ -4,6 +4,7 @@ using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -110,15 +111,29 @@ namespace Queueinator.Forms.Controls
 
         public ContextMenuStrip CreateContextMenuForMessages(String name)
         {
-            ContextMenuStrip cms = new ContextMenuStrip();
+            ContextMenuStrip cms = new ContextMenuStrip()
+            {
+                ImageList = new ImageList(),
+            };
 
-            var toolStripItem = new ToolStripButton()
+            cms.ImageList.Images.Add(Image.FromFile("./Images/send.png"));
+
+            var toolStripItem = new ToolStripMenuItem()
             {
                 Text = "Publish",
                 Name = name,
+                ImageIndex = 0
             };
 
-            toolStripItem.Click += On_Publish_message;
+            var exchange = new ToolStripMenuItem()
+            {
+                Text = "Exchange",
+                Name = name,
+            };
+
+            exchange.Click += On_Publish_message;
+
+            toolStripItem.DropDownItems.Add(exchange);
 
             cms.Items.Add(toolStripItem);
 

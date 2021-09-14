@@ -171,12 +171,19 @@ namespace Queueinator.Forms
 
         public ContextMenuStrip CreateContextMenuForQueues(String name)
         {
-            ContextMenuStrip cms = new ContextMenuStrip();
+            ContextMenuStrip cms = new ContextMenuStrip()
+            {
+                ShowCheckMargin = false,
+                ImageList = new ImageList(),
 
-            var toolStripItem = new ToolStripButton()
+            };
+            cms.ImageList.Images.Add(Image.FromFile("Images/trash.png"));
+
+            var toolStripItem = new ToolStripMenuItem()
             {
                 Text = "Purge",
                 Name = name,
+                ImageIndex = 0,
             };
 
             toolStripItem.Click += On_Purge_Queue;
