@@ -25,6 +25,9 @@ namespace Queueinator.Forms
         {
             InitializeComponent();
 
+            _newServerForm = newServerForm;
+            _mediator = mediator;
+
             tsAddServer.Click += tsAddServer_Click;
             serverTreeView.NodeMouseDoubleClick += On_TreeViewNode_DoubleClick;
             serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
@@ -33,8 +36,6 @@ namespace Queueinator.Forms
 
             tabControl.MouseDown += On_tabControl_MouseDown;
             this.FormClosed += On_FormClosed;
-            _newServerForm = newServerForm;
-            _mediator = mediator;
 
             serverTreeView.ImageList = new ImageList();
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/closed_folder.png"));

@@ -128,7 +128,7 @@ namespace Queueinator.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverTreeView.Location = new System.Drawing.Point(3, 28);
             this.serverTreeView.Name = "serverTreeView";
-            this.serverTreeView.Size = new System.Drawing.Size(215, 763);
+            this.serverTreeView.Size = new System.Drawing.Size(220, 763);
             this.serverTreeView.TabIndex = 0;
             // 
             // tabControl
@@ -136,10 +136,10 @@ namespace Queueinator.Forms
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Location = new System.Drawing.Point(-1, 0);
+            this.tabControl.Location = new System.Drawing.Point(1, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1121, 791);
+            this.tabControl.Size = new System.Drawing.Size(1127, 791);
             this.tabControl.TabIndex = 0;
             // 
             // Form1
