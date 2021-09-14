@@ -9,21 +9,16 @@ using System.Threading.Tasks;
 
 namespace Queueinator.Application.Features.LoadQueues
 {
-    public class LoadQueuesCommand : IRequest<Result<HostQueue[], BusinessException>>
+    public class LoadQueuesQuery : IRequest<Result<HostQueue[], BusinessException>>
     {
         public Server Server { get; set; }
         public string VHost { get; set; }
     }
 
-    public class LoadQueuesHandler : IRequestHandler<LoadQueuesCommand, Result<HostQueue[], BusinessException>>
+    public class LoadQueuesHandler : IRequestHandler<LoadQueuesQuery, Result<HostQueue[], BusinessException>>
     {
-        public async Task<Result<HostQueue[], BusinessException>> Handle(LoadQueuesCommand request, CancellationToken cancellationToken)
+        public async Task<Result<HostQueue[], BusinessException>> Handle(LoadQueuesQuery request, CancellationToken cancellationToken)
         {
-            //https://www.rabbitmq.com/uri-spec.html
-            //https://stackoverflow.com/questions/43332913/can-i-iterate-through-queues-using-the-rabbitmq-net-client
-            //https://stackoverflow.com/questions/33119611/how-to-make-rabbitmq-api-calls-with-vhost
-            //https://rawcdn.githack.com/rabbitmq/rabbitmq-management/v3.8.0/priv/www/api/index.html
-
             var data = await Result.Try(async () =>
             {
                 var host = request.VHost == "/" ? "%2f" : request.VHost;

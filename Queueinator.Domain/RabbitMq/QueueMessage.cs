@@ -22,6 +22,31 @@ namespace Queueinator.Domain.RabbitMq
 
         [JsonPropertyName("properties")]
         public MessageProperties Properties { get; set; }
+
+        [JsonPropertyName("routing_key")]
+        public String RoutingKey { get; set; }
+
+        [JsonPropertyName("payload_encoding")]
+        public String Encoding { get; set; }
+
+        public QueueMessage Clone()
+        {
+            return new QueueMessage
+            {
+                Bytes = Bytes,
+                Payload = Payload,
+                Exchange = Exchange,
+                MessageCount = MessageCount,
+                Properties = new MessageProperties
+                {
+                    DeliveryMode = Properties.DeliveryMode,
+                    Headers = Properties.Headers,
+                    Id = Guid.NewGuid(),
+                },
+                RoutingKey = RoutingKey,
+                Encoding = Encoding,
+            };
+        }
     }
 
     public class MessageProperties

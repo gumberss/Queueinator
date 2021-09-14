@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Queueinator.Application.Features.LoadMessages;
+using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace Queueinator.Forms.Controls
         {
             var server = _queueTree.Host.Server.Server;
 
-            var messages = await _mediator.Send(new LoadMessagesCommand()
+            var messages = await _mediator.Send(new LoadMessagesQuery()
             {
                 HostName = _queueTree.Queue.VirtualHostName,
                 Server = server,
@@ -95,13 +96,72 @@ namespace Queueinator.Forms.Controls
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Properties.Id });
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Bytes });
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Payload });
+                    //row.ContextMenuStrip = CreateContextMenuForMessages(message.Properties.Id.ToString());
+
+                    messagesGrid.ContextMenuStrip = CreateContextMenuForMessages(message.Properties.Id.ToString());
                     messagesGrid.Rows.Add(row);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error", ex.Message);
+                    MessageBox.Show(ex.Message, "Error");
                 }
             }
+        }
+
+        public ContextMenuStrip CreateContextMenuForMessages(String name)
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+
+            var toolStripItem = new ToolStripButton()
+            {
+                Text = "Publish",
+                Name = name,
+            };
+
+            toolStripItem.Click += On_Publish_message;
+
+            cms.Items.Add(toolStripItem);
+
+            return cms;
+        }
+
+        private void On_Publish_message(object sender, EventArgs e)
+        {
+            if ((sender is ToolStripItem))
+            {
+                var rows = new List<DataGridViewRow>(messagesGrid.SelectedCells.Count);
+
+                foreach (DataGridViewCell cell in messagesGrid.SelectedCells)
+                {
+                    if (!rows.Contains(cell.OwningRow))
+                        rows.Add(cell.OwningRow);
+                }
+
+                foreach (var row in rows)
+                {
+                    var messageIdObj = row.Cells[0].Value;
+                    if (messageIdObj is not null)
+                    {
+                        var messageId = Guid.Parse(messageIdObj.ToString());
+                        PublishMessage(_messages[messageId]).ConfigureAwait(false);
+                    }
+
+                }
+
+                ReloadMessages().ConfigureAwait(false);
+            }
+        }
+
+        private async Task PublishMessage(MessageTree messageTree)
+        {
+            var result = await _mediator.Send(new PublishMessageCommand()
+            {
+                Server = messageTree.Queue.Host.Server.Server,
+                Exchange = messageTree.Message.Exchange,
+                VHost = messageTree.Queue.Host.Host.Name,
+                Message = messageTree.Message
+            });
+
         }
 
         private void On_reload_messages_clicked(object sender, EventArgs e)

@@ -138,7 +138,7 @@ namespace Queueinator.Forms
                 var host = _virtualHosts[e.Node.Name];
                 var serverNode = _servers[host.Node.Parent.Name];
 
-                var queues = await _mediator.Send(new LoadQueuesCommand()
+                var queues = await _mediator.Send(new LoadQueuesQuery()
                 {
                     Server = serverNode.Server,
                     VHost = host.Host.Name

@@ -9,7 +9,12 @@ using System.Threading.Tasks;
 
 namespace Queueinator.Application.Features.LoadMessages
 {
-    public class LoadMessagesCommand : IRequest<Result<QueueMessage[], BusinessException>>
+    //https://www.rabbitmq.com/uri-spec.html
+    //https://stackoverflow.com/questions/43332913/can-i-iterate-through-queues-using-the-rabbitmq-net-client
+    //https://stackoverflow.com/questions/33119611/how-to-make-rabbitmq-api-calls-with-vhost
+    //https://rawcdn.githack.com/rabbitmq/rabbitmq-management/v3.8.0/priv/www/api/index.html
+
+    public class LoadMessagesQuery : IRequest<Result<QueueMessage[], BusinessException>>
     {
         public Server Server { get; set; }
 
@@ -18,15 +23,10 @@ namespace Queueinator.Application.Features.LoadMessages
 
         public int CountMessages { get; set; }
     }
-    public class LoadMessagesHandler : IRequestHandler<LoadMessagesCommand, Result<QueueMessage[], BusinessException>>
+    public class LoadMessagesHandler : IRequestHandler<LoadMessagesQuery, Result<QueueMessage[], BusinessException>>
     {
-        public async Task<Result<QueueMessage[], BusinessException>> Handle(LoadMessagesCommand request, CancellationToken cancellationToken)
+        public async Task<Result<QueueMessage[], BusinessException>> Handle(LoadMessagesQuery request, CancellationToken cancellationToken)
         {
-            //https://www.rabbitmq.com/uri-spec.html
-            //https://stackoverflow.com/questions/43332913/can-i-iterate-through-queues-using-the-rabbitmq-net-client
-            //https://stackoverflow.com/questions/33119611/how-to-make-rabbitmq-api-calls-with-vhost
-            //https://rawcdn.githack.com/rabbitmq/rabbitmq-management/v3.8.0/priv/www/api/index.html
-
             var messages = await Result.Try(async () => {
 
                 var host = request.HostName == "/" ? "%2f" : request.HostName;
