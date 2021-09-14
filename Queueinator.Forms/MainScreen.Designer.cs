@@ -37,7 +37,7 @@ namespace Queueinator.Forms
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsAddServer = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.tsRemoveServer = new System.Windows.Forms.ToolStripButton();
             this.serverTreeView = new System.Windows.Forms.TreeView();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.menuStrip1.SuspendLayout();
@@ -94,7 +94,7 @@ namespace Queueinator.Forms
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsAddServer,
-            this.toolStripButton2});
+            this.tsRemoveServer});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(221, 25);
@@ -112,14 +112,14 @@ namespace Queueinator.Forms
             this.tsAddServer.Text = "tsAddServer";
             this.tsAddServer.ToolTipText = "Adicionar novo server";
             // 
-            // toolStripButton2
+            // tsRemoveServer
             // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "tsRemoveServer";
+            this.tsRemoveServer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsRemoveServer.Image = ((System.Drawing.Image)(resources.GetObject("tsRemoveServer.Image")));
+            this.tsRemoveServer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsRemoveServer.Name = "tsRemoveServer";
+            this.tsRemoveServer.Size = new System.Drawing.Size(23, 22);
+            this.tsRemoveServer.Text = "Remove Server";
             // 
             // serverTreeView
             // 
@@ -139,10 +139,10 @@ namespace Queueinator.Forms
             this.tabControl.Location = new System.Drawing.Point(1, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1127, 791);
+            this.tabControl.Size = new System.Drawing.Size(1122, 791);
             this.tabControl.TabIndex = 0;
             // 
-            // Form1
+            // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -152,7 +152,7 @@ namespace Queueinator.Forms
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "MainScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Queueinator";
             this.menuStrip1.ResumeLayout(false);
@@ -177,7 +177,7 @@ namespace Queueinator.Forms
         private System.Windows.Forms.TreeView serverTreeView;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton tsAddServer;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton tsRemoveServer;
         private System.Windows.Forms.TabControl tabControl;
     }
 }

@@ -29,6 +29,7 @@ namespace Queueinator.Forms
             _mediator = mediator;
 
             tsAddServer.Click += tsAddServer_Click;
+            tsRemoveServer.Click += tsRemoveServer_Click;
             serverTreeView.NodeMouseDoubleClick += On_TreeViewNode_DoubleClick;
             serverTreeView.NodeMouseClick += On_TreeViewNode_Click;
             serverTreeView.AfterCollapse += On_after_colapse_treeView;
@@ -86,6 +87,49 @@ namespace Queueinator.Forms
         private void tsAddServer_Click(object sender, EventArgs e)
         {
             ConnectToAServer(_newServerForm);
+        }
+
+        private void tsRemoveServer_Click(object sender, EventArgs e)
+        {
+            var serverName = serverTreeView.SelectedNode.Name;
+            if (_servers.ContainsKey(serverName))
+            {
+                var server = _servers[serverName];
+
+                var hosts = _virtualHosts.Values.Where(x => x.Server == server);
+
+                foreach (TabPage tab in tabControl.TabPages)
+                {
+                    if (hosts.Any(x => tab.Name.StartsWith(x.FullName())))
+                        this.tabControl.TabPages.Remove(tab);
+                }
+
+                foreach (var host in hosts)
+                {
+                    _virtualHosts.Remove(host.FullName());
+                }
+                _servers.Remove(serverName);
+
+
+                var removeQueues = _queues.Where(x => x.Value.Host.Server.Server == server.Server).ToList();
+
+                removeQueues.ForEach(x => _queues.Remove(x.Key));
+
+                RemoveNodes(new[] { server.Node });
+            }
+        }
+
+        private void RemoveNodes(IEnumerable<TreeNode> nodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if(node is null) continue;
+
+                if (node.Nodes.Count > 0)
+                    RemoveNodes(node.Nodes.Cast<TreeNode>());
+
+                node.Remove();
+            }
         }
 
         Dictionary<String, HostTree> _virtualHosts = new Dictionary<string, HostTree>();
