@@ -24,7 +24,10 @@ namespace Queueinator.Forms.Domain
             Node = node;
             Server = server;
 
-            QueuesNode = new TreeNode("Queues");
+            QueuesNode = new TreeNode("Queues")
+            {
+                Name = "Queues"
+            };
             node.Nodes.Add(QueuesNode);
         }
     }

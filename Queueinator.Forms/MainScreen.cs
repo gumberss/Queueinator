@@ -213,20 +213,24 @@ namespace Queueinator.Forms
 
                 var hostNode = serverNode.Nodes.Add($"{newServer.Name}:{host.Name}", host.Name);
 
-                _virtualHosts.Add($"{newServer.Name}:{host.Name}", new HostTree(host, hostNode, serverTree));
+                var hostTree = new HostTree(host, hostNode, serverTree);
+
+                _virtualHosts.Add($"{newServer.Name}:{host.Name}", hostTree);
             }
         }
 
         private async void On_TreeViewNode_DoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (_virtualHosts.ContainsKey($"{e.Node.Name}"))
+            if (e.Node.Parent is null || !_virtualHosts.ContainsKey(e.Node.Parent.Name)) return;
+
+            if (e.Node.Name == "Queues")
             {
-                var host = _virtualHosts[e.Node.Name];
-                var serverNode = _servers[host.Node.Parent.Name];
+                var host = _virtualHosts[e.Node.Parent.Name];
+                var server = host.Server;
 
                 var queues = await _mediator.Send(new LoadQueuesQuery()
                 {
-                    Server = serverNode.Server,
+                    Server = server.Server,
                     VHost = host.Host.Name
                 });
 
@@ -251,7 +255,7 @@ namespace Queueinator.Forms
                     }
                 );
 
-                host.Node.Expand();
+                host.QueuesNode.Expand();
             }
         }
 
