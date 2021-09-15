@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Queueinator.Application.Features.PublishMessages
 {
-    public class PublishMessageCommand : IRequest<Result<bool, BusinessException>>
+    public class PublishToExchangeCommand : IRequest<Result<bool, BusinessException>>
     {
         public Server Server { get; set; }
         public string VHost { get; set; }
@@ -17,9 +17,9 @@ namespace Queueinator.Application.Features.PublishMessages
         public QueueMessage Message { get; set; }
     }
 
-    public class PublishMessageHandler : IRequestHandler<PublishMessageCommand, Result<bool, BusinessException>>
+    public class PublishToExchangeHandler : IRequestHandler<PublishToExchangeCommand, Result<bool, BusinessException>>
     {
-        public async Task<Result<bool, BusinessException>> Handle(PublishMessageCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool, BusinessException>> Handle(PublishToExchangeCommand request, CancellationToken cancellationToken)
         {
             var host = request.VHost == "/" ? "%2f" : request.VHost;
 

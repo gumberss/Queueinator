@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace Queueinator.Forms.Controls
@@ -35,11 +36,20 @@ namespace Queueinator.Forms.Controls
 
             messagesGrid.SelectionChanged += On_Change_Row_selection;
 
+            messagesGrid.AllowDrop = true;
+
             LoadMessages().ConfigureAwait(false);
 
             btnReload.Click += On_reload_messages_clicked;
         }
 
+        private void On_drag_item(object sender, ItemDragEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var a = e.Item;
+            }
+        }
         private void On_Change_Row_selection(object sender, EventArgs e)
         {
             if (messagesGrid.SelectedCells.Count == 0) return;
@@ -64,6 +74,8 @@ namespace Queueinator.Forms.Controls
             });
 
             message.Message.Payload = payload;
+
+            DoDragDrop(message, DragDropEffects.Move);
         }
 
         private async Task LoadMessages()
@@ -169,7 +181,7 @@ namespace Queueinator.Forms.Controls
 
         private async Task PublishMessage(MessageTree messageTree)
         {
-            var result = await _mediator.Send(new PublishMessageCommand()
+            var result = await _mediator.Send(new PublishToExchangeCommand()
             {
                 Server = messageTree.Queue.Host.Server.Server,
                 Exchange = messageTree.Message.Exchange,

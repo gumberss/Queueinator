@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Queueinator.Application.Features.LoadQueues;
+using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Application.Features.PurgeQueue;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Forms.Controls;
@@ -44,7 +45,42 @@ namespace Queueinator.Forms
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/messages.png"));
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/message.png"));
 
+            serverTreeView.AllowDrop = true;
+            serverTreeView.DragOver += On_server_tree_view_drag_over;
+            serverTreeView.DragDrop += On_server_tree_view_drag_drop;
+
             LoadServers();
+        }
+
+        private void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
+        {
+            var name = typeof(MessageTree).FullName;
+
+            if (e.Data.GetDataPresent(name))
+            {
+                var messageTree = e.Data.GetData(name) as MessageTree;
+
+                var selectedItemToDropPosition = serverTreeView.PointToClient(new Point(e.X, e.Y));
+
+                var selectedItem = serverTreeView.GetNodeAt(selectedItemToDropPosition);
+
+                if (selectedItem is null) return;
+
+                if (_queues.ContainsKey(selectedItem.Name))
+                {
+                    _mediator.Send(new PublishToQueueCommand()
+                    {
+                        
+                    });
+                }
+                //verificar apra exchange
+
+            }
+        }
+
+        private void On_server_tree_view_drag_over(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
         }
 
         private void On_FormClosed(object sender, FormClosedEventArgs e) => SaveServers();
@@ -123,7 +159,7 @@ namespace Queueinator.Forms
         {
             foreach (TreeNode node in nodes)
             {
-                if(node is null) continue;
+                if (node is null) continue;
 
                 if (node.Nodes.Count > 0)
                     RemoveNodes(node.Nodes.Cast<TreeNode>());
