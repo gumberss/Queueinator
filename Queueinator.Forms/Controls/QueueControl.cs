@@ -34,6 +34,7 @@ namespace Queueinator.Forms.Controls
             messagesGrid.Columns.Add("Payload", "Payload");
             messagesGrid.Columns[2].Width = 500;
 
+            messagesGrid.CellMouseDown += On_Cell_Mouse_Down;
             messagesGrid.SelectionChanged += On_Change_Row_selection;
 
             messagesGrid.AllowDrop = true;
@@ -41,6 +42,25 @@ namespace Queueinator.Forms.Controls
             LoadMessages().ConfigureAwait(false);
 
             btnReload.Click += On_reload_messages_clicked;
+        }
+
+        private void On_Cell_Mouse_Down(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            List<MessageTree> selectedMessages = new List<MessageTree>();
+
+            foreach (DataGridViewCell cell in messagesGrid.SelectedCells)
+            {
+                var row = messagesGrid.Rows[cell.RowIndex];
+
+                var messageId = row.Cells[0].Value?.ToString();
+
+                if (messageId is not null)
+                {
+                    selectedMessages.Add(_messages[Guid.Parse(messageId)]);
+                }
+            }
+
+            DoDragDrop(selectedMessages, DragDropEffects.Move);
         }
 
         private void On_drag_item(object sender, ItemDragEventArgs e)
@@ -74,8 +94,6 @@ namespace Queueinator.Forms.Controls
             });
 
             message.Message.Payload = payload;
-
-            DoDragDrop(message, DragDropEffects.Move);
         }
 
         private async Task LoadMessages()

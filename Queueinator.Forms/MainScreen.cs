@@ -54,11 +54,11 @@ namespace Queueinator.Forms
 
         private void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
         {
-            var name = typeof(MessageTree).FullName;
+            var name = typeof(List<MessageTree>).FullName;
 
             if (e.Data.GetDataPresent(name))
             {
-                var messageTree = e.Data.GetData(name) as MessageTree;
+                var messagesTree = e.Data.GetData(name) as List<MessageTree>;
 
                 var selectedItemToDropPosition = serverTreeView.PointToClient(new Point(e.X, e.Y));
 
@@ -67,13 +67,15 @@ namespace Queueinator.Forms
                 if (selectedItem is null) return;
 
                 if (_queues.ContainsKey(selectedItem.Name))
-                {
+                { 
+                    var queue = _queues[selectedItem.Name];
+
                     _mediator.Send(new PublishToQueueCommand()
                     {
-                        Server = messageTree.Queue.Host.Server.Server,
-                        Queue = _queues[selectedItem.Name].Queue.Name,
-                        Message = messageTree.Message,
-                        VHost  = messageTree.Queue.Host.Host.Name
+                        Server = queue.Host.Server.Server,
+                        Queue = queue.Queue.Name,
+                        Messages = messagesTree.Select(x => x.Message),
+                        VHost  = queue.Host.Host.Name
                     });
                 }
                 //verificar apra exchange

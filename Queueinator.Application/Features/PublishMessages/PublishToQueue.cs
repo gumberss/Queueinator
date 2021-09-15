@@ -4,6 +4,7 @@ using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace Queueinator.Application.Features.PublishMessages
         public string VHost { get; set; }
         public string Queue { get; set; }
 
-        public QueueMessage Message { get; set; }
+        public IEnumerable<QueueMessage> Messages { get; set; }
     }
 
     public class PublishToQueueHandler : IRequestHandler<PublishToQueueCommand, Result<bool, BusinessException>>
@@ -43,14 +44,18 @@ namespace Queueinator.Application.Features.PublishMessages
                 {
                     channel.QueueDeclare(request.Queue, true, false, false, null);
 
-                    string message = request.Message.Payload;
+                    var a = channel.CreateBasicPublishBatch();
+                    
+                    foreach (var message in request.Messages)
+                    {
+                        var body = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(message.Payload));
 
-                    var body = Encoding.UTF8.GetBytes(message);
-
-                    var properties = channel.CreateBasicProperties();
-                    properties.MessageId = Guid.NewGuid().ToString();
-
-                    channel.BasicPublish("", request.Queue, properties, body);
+                        var properties = channel.CreateBasicProperties();
+                        properties.MessageId = Guid.NewGuid().ToString();
+                        a.Add("", request.Queue, false, properties, body);
+                    }
+                    
+                    a.Publish();
                 }
             });
 
