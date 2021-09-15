@@ -2,6 +2,9 @@
 using Queueinator.Application.Infra.Requests;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
+using RabbitMQ.Client;
+using System;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,16 +24,38 @@ namespace Queueinator.Application.Features.PublishMessages
     {
         public async Task<Result<bool, BusinessException>> Handle(PublishToQueueCommand request, CancellationToken cancellationToken)
         {
-            var host = request.VHost == "/" ? "%2f" : request.VHost;
+            //var host = request.VHost == "/" ? "%2f" : request.VHost;
 
-            //await Result.Try(async () =>
-            //{
-            //    var body = JsonSerializer.Serialize(request.Message.Clone());
+            var server = request.Server;
 
-            //    return await RabbitRequestMessageCreator.Send("POST", $"api/exchanges/{host}/{request.Queue}/publish", request.Server, body);
-            //});
+            await Result.Try(() =>
+            {
+                var factory = new ConnectionFactory
+                {
+                    HostName = server.Name,
+                    Password = server.Password,
+                    UserName = server.User,
+                    VirtualHost = request.VHost
+                };
+
+                using (var connection = factory.CreateConnection())
+                using (var channel = connection.CreateModel())
+                {
+                    channel.QueueDeclare(request.Queue, true, false, false, null);
+
+                    string message = request.Message.Payload;
+
+                    var body = Encoding.UTF8.GetBytes(message);
+
+                    var properties = channel.CreateBasicProperties();
+                    properties.MessageId = Guid.NewGuid().ToString();
+
+                    channel.BasicPublish("", request.Queue, properties, body);
+                }
+            });
 
             return true;
         }
+
     }
 }

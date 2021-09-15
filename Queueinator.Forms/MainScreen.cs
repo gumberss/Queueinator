@@ -70,7 +70,10 @@ namespace Queueinator.Forms
                 {
                     _mediator.Send(new PublishToQueueCommand()
                     {
-                        
+                        Server = messageTree.Queue.Host.Server.Server,
+                        Queue = _queues[selectedItem.Name].Queue.Name,
+                        Message = messageTree.Message,
+                        VHost  = messageTree.Queue.Host.Host.Name
                     });
                 }
                 //verificar apra exchange
