@@ -11,6 +11,8 @@ namespace Queueinator.Forms.Domain
 
         public ServerTree Server { get; }
 
+        public TreeNode QueuesNode { get; }
+
         public string FullName()
         {
             return $"{Server.Server.Name}:{this.Host.Name}";
@@ -21,6 +23,9 @@ namespace Queueinator.Forms.Domain
             Host = host;
             Node = node;
             Server = server;
+
+            QueuesNode = new TreeNode("Queues");
+            node.Nodes.Add(QueuesNode);
         }
     }
 }

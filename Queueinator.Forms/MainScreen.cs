@@ -237,7 +237,7 @@ namespace Queueinator.Forms
                 }
 
                 new LoadTreeNodesService().LoadNode(
-                    host.Node,
+                    host.QueuesNode,
                     queues.Value.ToList(),
                     (queue, queueNode) => new QueueTree(queue, queueNode, host),
                     (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
