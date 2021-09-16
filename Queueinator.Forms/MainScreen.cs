@@ -80,8 +80,18 @@ namespace Queueinator.Forms
                         VHost = queue.Host.Host.Name
                     });
                 }
-                //verificar apra exchange
+                else if (_exchanges.ContainsKey(selectedItem.Name)) // se for igual aoda fila??
+                {
+                    var exchange = _exchanges[selectedItem.Name];
 
+                    _mediator.Send(new PublishToExchangeCommand()
+                    {
+                        Server = exchange.Host.Server.Server,
+                        Exchange = exchange.Exchange,
+                        Messages = messagesTree.Select(x => x.Message),
+                        VHost = exchange.Host.Host.Name
+                    });
+                }
             }
         }
 

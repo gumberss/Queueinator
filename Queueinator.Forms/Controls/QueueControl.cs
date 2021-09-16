@@ -129,7 +129,7 @@ namespace Queueinator.Forms.Controls
                     row.Cells.Add(new DataGridViewTextBoxCell() { Value = message.Payload });
                     //row.ContextMenuStrip = CreateContextMenuForMessages(message.Properties.Id.ToString());
 
-                    messagesGrid.ContextMenuStrip = CreateContextMenuForMessages(message.Properties.Id.ToString());
+                    //messagesGrid.ContextMenuStrip = CreateContextMenuForMessages(message.Properties.Id.ToString());
                     messagesGrid.Rows.Add(row);
                 }
                 catch (Exception ex)
@@ -137,78 +137,6 @@ namespace Queueinator.Forms.Controls
                     MessageBox.Show(ex.Message, "Error");
                 }
             }
-        }
-
-        public ContextMenuStrip CreateContextMenuForMessages(String name)
-        {
-            ContextMenuStrip cms = new ContextMenuStrip()
-            {
-                ImageList = new ImageList(),
-            };
-
-            cms.ImageList.Images.Add(Image.FromFile("./Images/send.png"));
-
-            var toolStripItem = new ToolStripMenuItem()
-            {
-                Text = "Publish",
-                Name = name,
-                ImageIndex = 0
-            };
-
-            var exchange = new ToolStripMenuItem()
-            {
-                Text = "Exchange",
-                Name = name,
-            };
-
-            exchange.Click += On_Publish_message;
-
-            toolStripItem.DropDownItems.Add(exchange);
-
-            cms.Items.Add(toolStripItem);
-
-            return cms;
-        }
-
-        private void On_Publish_message(object sender, EventArgs e)
-        {
-            if ((sender is ToolStripItem))
-            {
-                var rows = new List<DataGridViewRow>(messagesGrid.SelectedCells.Count);
-
-                foreach (DataGridViewCell cell in messagesGrid.SelectedCells)
-                {
-                    if (!rows.Contains(cell.OwningRow))
-                        rows.Add(cell.OwningRow);
-                }
-
-                foreach (var row in rows)
-                {
-                    var messageIdObj = row.Cells[0].Value;
-                    if (messageIdObj is not null)
-                    {
-                        var messageId = Guid.Parse(messageIdObj.ToString());
-                        PublishMessage(_messages[messageId]).ConfigureAwait(false);
-                    }
-
-                }
-
-                ReloadMessages().ConfigureAwait(false);
-            }
-        }
-
-        private async Task PublishMessage(MessageTree messageTree)
-        {
-            var result = await _mediator.Send(new PublishToExchangeCommand()
-            {
-                Server = messageTree.Queue.Host.Server.Server,
-                Exchange = messageTree.Message.Exchange,
-                VHost = messageTree.Queue.Host.Host.Name,
-                Message = messageTree.Message
-            });
-
-            if (result.IsFailure)
-                MessageBox.Show("It was not possible to publish the message", "Error");
         }
 
         private void On_reload_messages_clicked(object sender, EventArgs e)

@@ -55,7 +55,7 @@ namespace Queueinator.Domain.RabbitMq
         public Guid Id { get; set; }
 
         [JsonPropertyName("delivery_mode")]
-        public int DeliveryMode { get; set; }
+        public byte DeliveryMode { get; set; }
 
         [JsonPropertyName("headers")]
         public object Headers { get; set; }

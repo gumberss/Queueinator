@@ -44,7 +44,7 @@ namespace Queueinator.Application.Features.PublishMessages
                 {
                     channel.QueueDeclare(request.Queue, true, false, false, null);
 
-                    var a = channel.CreateBasicPublishBatch();
+                    var batch = channel.CreateBasicPublishBatch();
                     
                     foreach (var message in request.Messages)
                     {
@@ -52,10 +52,10 @@ namespace Queueinator.Application.Features.PublishMessages
 
                         var properties = channel.CreateBasicProperties();
                         properties.MessageId = Guid.NewGuid().ToString();
-                        a.Add("", request.Queue, false, properties, body);
+                        batch.Add("", request.Queue, false, properties, body);
                     }
                     
-                    a.Publish();
+                    batch.Publish();
                 }
             });
 
