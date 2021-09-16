@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Queueinator.Application.Features.LoadExchanges;
 using Queueinator.Application.Features.LoadQueues;
 using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Application.Features.PurgeQueue;
@@ -44,6 +45,7 @@ namespace Queueinator.Forms
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/opened_folder.png"));
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/messages.png"));
             serverTreeView.ImageList.Images.Add(Image.FromFile("Images/message.png"));
+            serverTreeView.ImageList.Images.Add(Image.FromFile("Images/broadcast.png"));
 
             serverTreeView.AllowDrop = true;
             serverTreeView.DragOver += On_server_tree_view_drag_over;
@@ -67,7 +69,7 @@ namespace Queueinator.Forms
                 if (selectedItem is null) return;
 
                 if (_queues.ContainsKey(selectedItem.Name))
-                { 
+                {
                     var queue = _queues[selectedItem.Name];
 
                     _mediator.Send(new PublishToQueueCommand()
@@ -75,7 +77,7 @@ namespace Queueinator.Forms
                         Server = queue.Host.Server.Server,
                         Queue = queue.Queue.Name,
                         Messages = messagesTree.Select(x => x.Message),
-                        VHost  = queue.Host.Host.Name
+                        VHost = queue.Host.Host.Name
                     });
                 }
                 //verificar apra exchange
@@ -176,6 +178,7 @@ namespace Queueinator.Forms
         Dictionary<String, HostTree> _virtualHosts = new Dictionary<string, HostTree>();
         Dictionary<String, ServerTree> _servers = new Dictionary<string, ServerTree>();
         Dictionary<String, QueueTree> _queues = new Dictionary<string, QueueTree>();
+        Dictionary<String, ExchangeTree> _exchanges = new Dictionary<string, ExchangeTree>();
 
         private void ConnectToAServer(NewServerForm newServerPopup)
         {
@@ -191,10 +194,6 @@ namespace Queueinator.Forms
             else if (dialogResult == DialogResult.Retry)
             {
                 ConnectToAServer(newServerPopup);
-            }
-            else if (dialogResult == DialogResult.Cancel)
-            {
-
             }
         }
 
@@ -228,35 +227,79 @@ namespace Queueinator.Forms
                 var host = _virtualHosts[e.Node.Parent.Name];
                 var server = host.Server;
 
-                var queues = await _mediator.Send(new LoadQueuesQuery()
-                {
-                    Server = server.Server,
-                    VHost = host.Host.Name
-                });
-
-                if (queues.IsFailure)
-                {
-                    MessageBox.Show("Falha ao carregar as filas");
-                    return;
-                }
-
-                new LoadTreeNodesService().LoadNode(
-                    host.QueuesNode,
-                    queues.Value.ToList(),
-                    (queue, queueNode) => new QueueTree(queue, queueNode, host),
-                    (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
-                    (key, lastQueue) => $"{host.FullName()}:{lastQueue.Name}",
-                    ref _queues,
-                    lastNode =>
-                    {
-                        lastNode.ImageIndex = 2;
-                        lastNode.SelectedImageIndex = 2;
-                        lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
-                    }
-                );
-
-                host.QueuesNode.Expand();
+                await LoadQueues(host, server);
             }
+            else if (e.Node.Name == "Exchanges")
+            {
+                var host = _virtualHosts[e.Node.Parent.Name];
+                var server = host.Server;
+
+                await LoadExchanges(host, server);
+            }
+        }
+
+        private async Task LoadExchanges(HostTree host, ServerTree server)
+        {
+            var exchanges = await _mediator.Send(new LoadExchangesQuery()
+            {
+                Server = server.Server,
+                VHost = host.Host.Name
+            });
+
+            if (exchanges.IsFailure)
+            {
+                MessageBox.Show("Falha ao carregar as filas");
+                return;
+            }
+
+            new LoadTreeNodesService().LoadNode(
+                host.ExchangeNode,
+                exchanges.Value.ToList(),
+                (exchange, exchangeNode) => new ExchangeTree(exchange, exchangeNode, host),
+                (key, exchange, isLeaf) => isLeaf ? $"{key} ({exchange.First().Type})" : $"{key}",
+                (key, lastExchange) => $"{host.FullName()}:{lastExchange.Name}",
+                ref _exchanges,
+                lastNode =>
+                {
+                    lastNode.ImageIndex = 4;
+                    lastNode.SelectedImageIndex = 4;
+                }
+            );
+
+            host.ExchangeNode.Expand();
+        }
+
+
+        private async Task LoadQueues(HostTree host, ServerTree server)
+        {
+            var queues = await _mediator.Send(new LoadQueuesQuery()
+            {
+                Server = server.Server,
+                VHost = host.Host.Name
+            });
+
+            if (queues.IsFailure)
+            {
+                MessageBox.Show("Falha ao carregar as filas");
+                return;
+            }
+
+            new LoadTreeNodesService().LoadNode(
+                host.QueuesNode,
+                queues.Value.ToList(),
+                (queue, queueNode) => new QueueTree(queue, queueNode, host),
+                (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
+                (key, lastQueue) => $"{host.FullName()}:{lastQueue.Name}",
+                ref _queues,
+                lastNode =>
+                {
+                    lastNode.ImageIndex = 2;
+                    lastNode.SelectedImageIndex = 2;
+                    lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
+                }
+            );
+
+            host.QueuesNode.Expand();
         }
 
         public ContextMenuStrip CreateContextMenuForQueues(String name)

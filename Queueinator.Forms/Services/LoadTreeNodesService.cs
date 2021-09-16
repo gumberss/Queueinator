@@ -41,11 +41,11 @@ namespace Queueinator.Forms.Services
 
             char[] elementNameSeparator = new[] { '-', '.' };
 
-            var groupedElements = elementsToAdd.GroupBy(x => x.Name.Split(elementNameSeparator)[depth]);
+            var groupedElements = elementsToAdd.GroupBy(x => x.Name.TrimEnd(elementNameSeparator).Split(elementNameSeparator)[depth]);
 
             foreach (var item in groupedElements)
             {
-                var lastNodeItems = item.Where(x => x.Name.Count(y => elementNameSeparator.Contains(y)) == depth);
+                var lastNodeItems = item.Where(x => x.Name.TrimEnd(elementNameSeparator).Count(y => elementNameSeparator.Contains(y)) == depth);
 
                 var newItems = item.Except(lastNodeItems).ToList();
 

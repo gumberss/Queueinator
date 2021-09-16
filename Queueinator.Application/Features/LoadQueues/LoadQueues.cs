@@ -2,7 +2,6 @@
 using Queueinator.Application.Infra.Requests;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;

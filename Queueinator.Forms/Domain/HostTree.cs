@@ -13,6 +13,8 @@ namespace Queueinator.Forms.Domain
 
         public TreeNode QueuesNode { get; }
 
+        public TreeNode ExchangeNode { get; }
+
         public string FullName()
         {
             return $"{Server.Server.Name}:{this.Host.Name}";
@@ -24,11 +26,11 @@ namespace Queueinator.Forms.Domain
             Node = node;
             Server = server;
 
-            QueuesNode = new TreeNode("Queues")
-            {
-                Name = "Queues"
-            };
+            QueuesNode = new TreeNode("Queues") { Name = "Queues" };
             node.Nodes.Add(QueuesNode);
+
+            ExchangeNode = new TreeNode("Exchanges") { Name = "Exchanges" };
+            node.Nodes.Add(ExchangeNode);
         }
     }
 }
