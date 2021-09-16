@@ -267,7 +267,7 @@ namespace Queueinator.Forms
                 exchanges.Value.ToList(),
                 (exchange, exchangeNode) => new ExchangeTree(exchange, exchangeNode, host),
                 (key, exchange, isLeaf) => isLeaf ? $"{key} ({exchange.First().Type})" : $"{key}",
-                (key, lastExchange) => $"{host.FullName()}:{lastExchange.Name}",
+                (key, lastExchange) => $"Exchange:{host.FullName()}:{lastExchange.Name}",
                 ref _exchanges,
                 lastNode =>
                 {
@@ -299,7 +299,7 @@ namespace Queueinator.Forms
                 queues.Value.ToList(),
                 (queue, queueNode) => new QueueTree(queue, queueNode, host),
                 (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
-                (key, lastQueue) => $"{host.FullName()}:{lastQueue.Name}",
+                (key, lastQueue) => $"Queue:{host.FullName()}:{lastQueue.Name}",
                 ref _queues,
                 lastNode =>
                 {
