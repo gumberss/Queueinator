@@ -1,10 +1,13 @@
 ﻿using MediatR;
+using Queueinator.Application.Features.DeleteMessages;
 using Queueinator.Application.Features.LoadMessages;
 using Queueinator.Application.Features.PublishMessages;
+using Queueinator.Domain.RabbitMq;
 using Queueinator.Forms.Domain;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
@@ -17,6 +20,7 @@ namespace Queueinator.Forms.Controls
         private readonly IMediator _mediator;
         private readonly QueueTree _queueTree;
         private Dictionary<Guid, MessageTree> _messages = new Dictionary<Guid, MessageTree>();
+
 
         public QueueControl(IMediator mediator, QueueTree queueTree)
         {
@@ -42,9 +46,28 @@ namespace Queueinator.Forms.Controls
             LoadMessages().ConfigureAwait(false);
 
             btnReload.Click += On_reload_messages_clicked;
+            btnDeleteMessages.Click += On_deleteMessages_clicked;
+        }
+
+        private void On_deleteMessages_clicked(object sender, EventArgs e)
+        {
+            _mediator.Send(new DeleteMessagesCommand()
+            {
+                Server = _queueTree.Host.Server.Server,
+                Queue = _queueTree.Queue.Name,
+                VHost = _queueTree.Host.Host.Name,
+                Messages = GetSelectedMessages().Select(x=> x.Message).ToList()
+            }) ;
         }
 
         private void On_Cell_Mouse_Down(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            List<MessageTree> selectedMessages = GetSelectedMessages();
+
+            DoDragDrop(selectedMessages, DragDropEffects.Move);
+        }
+
+        private List<MessageTree> GetSelectedMessages()
         {
             List<MessageTree> selectedMessages = new List<MessageTree>();
 
@@ -60,7 +83,7 @@ namespace Queueinator.Forms.Controls
                 }
             }
 
-            DoDragDrop(selectedMessages, DragDropEffects.Move);
+            return selectedMessages;
         }
 
         private void On_drag_item(object sender, ItemDragEventArgs e)
@@ -70,6 +93,7 @@ namespace Queueinator.Forms.Controls
                 var a = e.Item;
             }
         }
+
         private void On_Change_Row_selection(object sender, EventArgs e)
         {
             if (messagesGrid.SelectedCells.Count == 0) return;

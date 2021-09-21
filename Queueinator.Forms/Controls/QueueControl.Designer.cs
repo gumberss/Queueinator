@@ -36,6 +36,7 @@ namespace Queueinator.Forms.Controls
             this.messagesGrid = new System.Windows.Forms.DataGridView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnReload = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteMessages = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -92,9 +93,11 @@ namespace Queueinator.Forms.Controls
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnReload});
+            this.btnReload,
+            this.btnDeleteMessages});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(1095, 25);
             this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 1;
@@ -109,6 +112,15 @@ namespace Queueinator.Forms.Controls
             this.btnReload.Size = new System.Drawing.Size(23, 22);
             this.btnReload.Text = "Refresh";
             // 
+            // btnDeleteMessages
+            // 
+            this.btnDeleteMessages.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteMessages.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteMessages.Image")));
+            this.btnDeleteMessages.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteMessages.Name = "btnDeleteMessages";
+            this.btnDeleteMessages.Size = new System.Drawing.Size(23, 22);
+            this.btnDeleteMessages.Text = "Delete Messages";
+            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -119,7 +131,7 @@ namespace Queueinator.Forms.Controls
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1089, 449);
+            this.tabControl1.Size = new System.Drawing.Size(1089, 413);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -128,7 +140,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1081, 421);
+            this.tabPage1.Size = new System.Drawing.Size(1081, 385);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -145,7 +157,7 @@ namespace Queueinator.Forms.Controls
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.ReadOnly = true;
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessage.Size = new System.Drawing.Size(1075, 414);
+            this.txtMessage.Size = new System.Drawing.Size(1075, 378);
             this.txtMessage.TabIndex = 0;
             // 
             // tabPage2
@@ -231,5 +243,6 @@ namespace Queueinator.Forms.Controls
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox txtDetails;
         private System.Windows.Forms.ToolStripButton btnReload;
+        private System.Windows.Forms.ToolStripButton btnDeleteMessages;
     }
 }

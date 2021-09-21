@@ -39,7 +39,7 @@ namespace Queueinator.Application.Features.DeleteMessages
 
                 var messagesToDeleteIds = request.Messages.Select(x => x.Properties.Id).ToList();
 
-                List<String> messagesChecked = new List<string>();
+                List<string> messagesChecked = new List<string>();
                 List<Guid> deletedMessages = new List<Guid>(request.Messages.Count());
                 bool inLoop = false;
 
@@ -68,17 +68,25 @@ namespace Queueinator.Application.Features.DeleteMessages
 
                         deletedMessages.Add(currentMessageId);
                     };
-                }
 
-                while (!inLoop && deletedMessages.Count != messagesToDeleteIds.Count)
-                {
-                    await Task.Delay(10);
+                    var startProcessDate = DateTime.Now;
+                    var timeout = TimeSpan.FromSeconds(30);
+
+                    while (!inLoop && deletedMessages.Count != messagesToDeleteIds.Count && !Timeout(startProcessDate, timeout))
+                    {
+                        await Task.Delay(10);
+                    }
                 }
 
                 if (inLoop) return false;
 
                 return true;
             });
+        }
+
+        private static bool Timeout(DateTime startProcessDate, TimeSpan timeout)
+        {
+            return startProcessDate.Add(timeout) < DateTime.Now;
         }
     }
 }
