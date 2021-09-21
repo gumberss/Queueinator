@@ -25,8 +25,6 @@ namespace Queueinator.Application.Features.PublishMessages
     {
         public async Task<Result<bool, BusinessException>> Handle(PublishToQueueCommand request, CancellationToken cancellationToken)
         {
-            //var host = request.VHost == "/" ? "%2f" : request.VHost;
-
             var server = request.Server;
 
             await Result.Try(() =>
