@@ -37,6 +37,7 @@ namespace Queueinator.Forms.Controls
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnReload = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteMessages = new System.Windows.Forms.ToolStripButton();
+            this.onMoveDropDown = new System.Windows.Forms.ToolStripComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -94,7 +95,8 @@ namespace Queueinator.Forms.Controls
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnReload,
-            this.btnDeleteMessages});
+            this.btnDeleteMessages,
+            this.onMoveDropDown});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -121,6 +123,15 @@ namespace Queueinator.Forms.Controls
             this.btnDeleteMessages.Size = new System.Drawing.Size(23, 22);
             this.btnDeleteMessages.Text = "Delete Messages";
             // 
+            // onMoveDropDown
+            // 
+            this.onMoveDropDown.DropDownWidth = 200;
+            this.onMoveDropDown.Items.AddRange(new object[] {
+            "On Move: Keep on source",
+            "On Move: Remove from source"});
+            this.onMoveDropDown.Name = "onMoveDropDown";
+            this.onMoveDropDown.Size = new System.Drawing.Size(200, 25);
+            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -131,7 +142,7 @@ namespace Queueinator.Forms.Controls
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1089, 413);
+            this.tabControl1.Size = new System.Drawing.Size(1089, 393);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -140,7 +151,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1081, 385);
+            this.tabPage1.Size = new System.Drawing.Size(1081, 365);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -157,7 +168,7 @@ namespace Queueinator.Forms.Controls
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.ReadOnly = true;
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessage.Size = new System.Drawing.Size(1075, 378);
+            this.txtMessage.Size = new System.Drawing.Size(1075, 358);
             this.txtMessage.TabIndex = 0;
             // 
             // tabPage2
@@ -166,7 +177,7 @@ namespace Queueinator.Forms.Controls
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1081, 385);
+            this.tabPage2.Size = new System.Drawing.Size(1081, 365);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -183,7 +194,7 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Name = "txtDetails";
             this.txtDetails.ReadOnly = true;
             this.txtDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDetails.Size = new System.Drawing.Size(1075, 379);
+            this.txtDetails.Size = new System.Drawing.Size(1075, 359);
             this.txtDetails.TabIndex = 0;
             // 
             // splitContainer1
@@ -244,5 +255,6 @@ namespace Queueinator.Forms.Controls
         private System.Windows.Forms.TextBox txtDetails;
         private System.Windows.Forms.ToolStripButton btnReload;
         private System.Windows.Forms.ToolStripButton btnDeleteMessages;
+        private System.Windows.Forms.ToolStripComboBox onMoveDropDown;
     }
 }

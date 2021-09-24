@@ -8,6 +8,7 @@ using Queueinator.Domain.RabbitMq;
 using Queueinator.Domain.Utils;
 using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
+using Queueinator.Forms.Domain.Enums;
 using Queueinator.Forms.Services;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,8 @@ namespace Queueinator.Forms
 {
     public partial class MainScreen : Form
     {
-        private NewServerForm _newServerForm;
-        private IMediator _mediator;
+        private readonly NewServerForm _newServerForm;
+        private readonly IMediator _mediator;
 
         public MainScreen(IMediator mediator, NewServerForm newServerForm)
         {
@@ -58,11 +59,11 @@ namespace Queueinator.Forms
 
         private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
         {
-            var name = typeof(List<MessageTree>).FullName;
+            var name = typeof(MoveMessageData).FullName;
 
             if (e.Data.GetDataPresent(name))
             {
-                var messagesTree = e.Data.GetData(name) as List<MessageTree>;
+                var moveMessageData = e.Data.GetData(name) as MoveMessageData;
 
                 var selectedItemToDropPosition = serverTreeView.PointToClient(new Point(e.X, e.Y));
 
@@ -80,7 +81,7 @@ namespace Queueinator.Forms
                     {
                         Server = queue.Host.Server.Server,
                         Queue = queue.Queue.Name,
-                        Messages = messagesTree.Select(x => x.Message),
+                        Messages = moveMessageData.Messages.Select(x => x.Message),
                         VHost = queue.Host.Host.Name
                     });
                 }
@@ -92,35 +93,38 @@ namespace Queueinator.Forms
                     {
                         Server = exchange.Host.Server.Server,
                         Exchange = exchange.Exchange,
-                        Messages = messagesTree.Select(x => x.Message),
+                        Messages = moveMessageData.Messages.Select(x => x.Message),
                         VHost = exchange.Host.Host.Name
                     });
                 }
 
-                if (moveMessagesResult != default && moveMessagesResult.IsSuccess && moveMessagesResult)
+                if(moveMessageData.PostAction == OnMoveEnum.RemoveFromSource)
                 {
-                    var movedMessages = messagesTree.Select(x => x.Message);
-                    var queue = messagesTree.First().Queue;
-
-                    var deleteResult = await _mediator.Send(new DeleteMessagesCommand()
+                    if (moveMessagesResult != default && moveMessagesResult.IsSuccess && moveMessagesResult)
                     {
-                        Server = queue.Host.Server.Server,
-                        Queue = queue.Queue.Name,
-                        VHost = queue.Host.Host.Name,
-                        Messages = movedMessages.ToList()
-                    });
+                        var movedMessages = moveMessageData.Messages.Select(x => x.Message);
+                        var queue = moveMessageData.Messages.First().Queue;
 
-                    if (deleteResult.IsFailure)
-                    {
-                        MessageBox.Show("A mensagem foi postada, mas nao foi possível remover da fila atual");
-                        return;
+                        var deleteResult = await _mediator.Send(new DeleteMessagesCommand()
+                        {
+                            Server = queue.Host.Server.Server,
+                            Queue = queue.Queue.Name,
+                            VHost = queue.Host.Host.Name,
+                            Messages = movedMessages.ToList()
+                        });
+
+                        if (deleteResult.IsFailure)
+                        {
+                            MessageBox.Show("A mensagem foi postada, mas nao foi possível remover da fila atual");
+                            return;
+                        }
+
+                        ReloadTab(queue);
                     }
-
-                    ReloadTab(queue);
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao publicar as mensagens");
+                    else if (moveMessagesResult != default && (moveMessagesResult.IsFailure || !moveMessagesResult))
+                    {
+                        MessageBox.Show("Falha ao publicar as mensagens");
+                    }
                 }
             }
         }
@@ -197,6 +201,9 @@ namespace Queueinator.Forms
                 var removeQueues = _queues.Where(x => x.Value.Host.Server.Server == server.Server).ToList();
 
                 removeQueues.ForEach(x => _queues.Remove(x.Key));
+
+                var removeExchanges = _exchanges.Where(x => x.Value.Host.Server.Server == server.Server).ToList();
+                removeExchanges.ForEach(x => _exchanges.Remove(x.Key));
 
                 RemoveNodes(new[] { server.Node });
             }

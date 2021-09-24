@@ -11,7 +11,7 @@ namespace Queueinator.Forms.Services
         public void LoadNode<T, TTree>(TreeNode parentNode,
             List<T> elements,
             Func<T, TreeNode, TTree> buildTree,
-            Func<String, IEnumerable<T>,bool, String> buildText,
+            Func<String, IEnumerable<T>, bool, String> buildText,
             Func<String, T, String> buildKey,
             ref Dictionary<String, TTree> refElements,
             Action<TreeNode> decorateLastNode) where T : INode
@@ -65,8 +65,15 @@ namespace Queueinator.Forms.Services
                     }
                     else
                     {
-                        var node = parentNode.Nodes.Find(buildKey(item.Key, lastElement), false)[0];
-                        node.Text = text;
+                        try
+                        {
+                            var node = parentNode.Nodes.Find(buildKey(item.Key, lastElement), false)[0];
+                            node.Text = text;
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     }
                 }
                 else

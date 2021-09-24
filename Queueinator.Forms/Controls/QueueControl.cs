@@ -4,6 +4,7 @@ using Queueinator.Application.Features.LoadMessages;
 using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Domain.RabbitMq;
 using Queueinator.Forms.Domain;
+using Queueinator.Forms.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -46,6 +47,8 @@ namespace Queueinator.Forms.Controls
 
             btnReload.Click += On_reload_messages_clicked;
             btnDeleteMessages.Click += On_deleteMessages_clicked;
+
+            onMoveDropDown.SelectedIndex = 0;
         }
 
         private void On_deleteMessages_clicked(object sender, EventArgs e)
@@ -63,7 +66,9 @@ namespace Queueinator.Forms.Controls
         {
             List<MessageTree> selectedMessages = GetSelectedMessages();
 
-            DoDragDrop(selectedMessages, DragDropEffects.Move);
+            var moveAction = (OnMoveEnum)onMoveDropDown.SelectedIndex;
+
+            DoDragDrop(new MoveMessageData(moveAction, selectedMessages), DragDropEffects.Move);
         }
 
         private List<MessageTree> GetSelectedMessages()
