@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Queueinator.Application.Features.DeleteMessages;
 using Queueinator.Application.Features.LoadExchanges;
 using Queueinator.Application.Features.LoadQueues;
 using Queueinator.Application.Features.PublishMessages;
 using Queueinator.Application.Features.PurgeQueue;
 using Queueinator.Domain.RabbitMq;
+using Queueinator.Domain.Utils;
 using Queueinator.Forms.Controls;
 using Queueinator.Forms.Domain;
 using Queueinator.Forms.Services;
@@ -54,7 +56,7 @@ namespace Queueinator.Forms
             LoadServers();
         }
 
-        private void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
+        private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
         {
             var name = typeof(List<MessageTree>).FullName;
 
@@ -68,11 +70,13 @@ namespace Queueinator.Forms
 
                 if (selectedItem is null) return;
 
+                Result<bool, BusinessException> moveMessagesResult = default;
+
                 if (_queues.ContainsKey(selectedItem.Name))
                 {
                     var queue = _queues[selectedItem.Name];
 
-                    _mediator.Send(new PublishToQueueCommand()
+                    moveMessagesResult = await _mediator.Send(new PublishToQueueCommand()
                     {
                         Server = queue.Host.Server.Server,
                         Queue = queue.Queue.Name,
@@ -80,17 +84,43 @@ namespace Queueinator.Forms
                         VHost = queue.Host.Host.Name
                     });
                 }
-                else if (_exchanges.ContainsKey(selectedItem.Name)) // se for igual aoda fila??
+                else if (_exchanges.ContainsKey(selectedItem.Name))
                 {
                     var exchange = _exchanges[selectedItem.Name];
 
-                    _mediator.Send(new PublishToExchangeCommand()
+                    moveMessagesResult = await _mediator.Send(new PublishToExchangeCommand()
                     {
                         Server = exchange.Host.Server.Server,
                         Exchange = exchange.Exchange,
                         Messages = messagesTree.Select(x => x.Message),
                         VHost = exchange.Host.Host.Name
                     });
+                }
+
+                if (moveMessagesResult != default && moveMessagesResult.IsSuccess && moveMessagesResult)
+                {
+                    var movedMessages = messagesTree.Select(x => x.Message);
+                    var queue = messagesTree.First().Queue;
+
+                    var deleteResult = await _mediator.Send(new DeleteMessagesCommand()
+                    {
+                        Server = queue.Host.Server.Server,
+                        Queue = queue.Queue.Name,
+                        VHost = queue.Host.Host.Name,
+                        Messages = movedMessages.ToList()
+                    });
+
+                    if (deleteResult.IsFailure)
+                    {
+                        MessageBox.Show("A mensagem foi postada, mas nao foi possível remover da fila atual");
+                        return;
+                    }
+
+                    ReloadTab(queue);
+                }
+                else
+                {
+                    MessageBox.Show("Falha ao publicar as mensagens");
                 }
             }
         }
@@ -414,17 +444,22 @@ namespace Queueinator.Forms
                     return;
                 }
 
-                var queuePurgedPage = GetPageByText(queue.Node.Name);
-
-                if (queuePurgedPage is null) return;
-
-                var queueControls = queuePurgedPage.Controls
-                    .Find(queue.Node.Name, false)
-                    .OfType<QueueControl>()
-                    .ToList();
-
-                queueControls.ForEach(x => x.ReloadMessages().ConfigureAwait(false));
+                ReloadTab(queue);
             }
+        }
+
+        private void ReloadTab(QueueTree queue)
+        {
+            var tab = GetPageByText(queue.Node.Name);
+
+            if (tab is null) return;
+
+            var queueControls = tab.Controls
+                .Find(queue.Node.Name, false)
+                .OfType<QueueControl>()
+                .ToList();
+
+            queueControls.ForEach(x => x.ReloadMessages().ConfigureAwait(false));
         }
     }
 }

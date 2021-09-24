@@ -21,7 +21,6 @@ namespace Queueinator.Forms.Controls
         private readonly QueueTree _queueTree;
         private Dictionary<Guid, MessageTree> _messages = new Dictionary<Guid, MessageTree>();
 
-
         public QueueControl(IMediator mediator, QueueTree queueTree)
         {
             InitializeComponent();
@@ -56,8 +55,8 @@ namespace Queueinator.Forms.Controls
                 Server = _queueTree.Host.Server.Server,
                 Queue = _queueTree.Queue.Name,
                 VHost = _queueTree.Host.Host.Name,
-                Messages = GetSelectedMessages().Select(x=> x.Message).ToList()
-            }) ;
+                Messages = GetSelectedMessages().Select(x => x.Message).ToList()
+            });
         }
 
         private void On_Cell_Mouse_Down(object sender, DataGridViewCellMouseEventArgs e)
@@ -84,14 +83,6 @@ namespace Queueinator.Forms.Controls
             }
 
             return selectedMessages;
-        }
-
-        private void On_drag_item(object sender, ItemDragEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                var a = e.Item;
-            }
         }
 
         private void On_Change_Row_selection(object sender, EventArgs e)
