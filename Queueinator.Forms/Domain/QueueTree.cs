@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Queueinator.Forms.Domain
 {
-    public class QueueTree 
+    public class QueueTree
     {
         public HostQueue Queue { get; }
 

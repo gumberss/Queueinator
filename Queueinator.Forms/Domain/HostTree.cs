@@ -1,4 +1,5 @@
 ﻿using Queueinator.Domain.RabbitMq;
+using System;
 using System.Windows.Forms;
 
 namespace Queueinator.Forms.Domain
@@ -14,6 +15,7 @@ namespace Queueinator.Forms.Domain
         public TreeNode QueuesNode { get; }
 
         public TreeNode ExchangeNode { get; }
+        public bool Refreshing { get;  set; }
 
         public string FullName()
         {
@@ -25,12 +27,15 @@ namespace Queueinator.Forms.Domain
             Host = host;
             Node = node;
             Server = server;
-
+            
             QueuesNode = new TreeNode("Queues") { Name = "Queues" };
+
             node.Nodes.Add(QueuesNode);
 
             ExchangeNode = new TreeNode("Exchanges") { Name = "Exchanges" };
             node.Nodes.Add(ExchangeNode);
         }
+
+       
     }
 }

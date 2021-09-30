@@ -12,10 +12,12 @@ using Queueinator.Forms.Domain.Enums;
 using Queueinator.Forms.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -53,8 +55,27 @@ namespace Queueinator.Forms
             serverTreeView.AllowDrop = true;
             serverTreeView.DragOver += On_server_tree_view_drag_over;
             serverTreeView.DragDrop += On_server_tree_view_drag_drop;
-
             LoadServers();
+        }
+
+        private void On_server_tree_view_back_color_changed(object sender, EventArgs e)
+        {
+            Thread.Sleep(1000);
+
+            foreach (TreeNode item in serverTreeView.Nodes)
+            {
+                ResetColor(item);
+            }
+        }
+
+        public void ResetColor(TreeNode node)
+        {
+            node.BackColor = Color.White;
+
+            foreach (TreeNode item in node.Nodes)
+            {
+                ResetColor(item);
+            }
         }
 
         private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
@@ -98,7 +119,7 @@ namespace Queueinator.Forms
                     });
                 }
 
-                if(moveMessageData.PostAction == OnMoveEnum.RemoveFromSource)
+                if (moveMessageData.PostAction == OnMoveEnum.RemoveFromSource)
                 {
                     if (moveMessagesResult != default && moveMessagesResult.IsSuccess && moveMessagesResult)
                     {
@@ -261,6 +282,8 @@ namespace Queueinator.Forms
 
                 var hostTree = new HostTree(host, hostNode, serverTree);
 
+                hostTree.QueuesNode.ContextMenuStrip = CreateContextMenuForGroupQueues(hostTree);
+
                 _virtualHosts.Add($"{newServer.Name}:{host.Name}", hostTree);
             }
         }
@@ -306,7 +329,7 @@ namespace Queueinator.Forms
                 (key, exchange, isLeaf) => isLeaf ? $"{key} ({exchange.First().Type})" : $"{key}",
                 (key, lastExchange) => $"Exchange:{host.FullName()}:{lastExchange.Name}",
                 ref _exchanges,
-                lastNode =>
+                (lastNode, element, oldTree) =>
                 {
                     lastNode.ImageIndex = 4;
                     lastNode.SelectedImageIndex = 4;
@@ -338,15 +361,63 @@ namespace Queueinator.Forms
                 (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
                 (key, lastQueue) => $"Queue:{host.FullName()}:{lastQueue.Name}",
                 ref _queues,
-                lastNode =>
+                (lastNode, element, oldTree) =>
                 {
                     lastNode.ImageIndex = 2;
                     lastNode.SelectedImageIndex = 2;
                     lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
+
+                    if (oldTree is not null)
+                    {
+                        if (oldTree.Queue.MessagesCount > element.MessagesCount)
+                            lastNode.BackColor = Color.LightCoral;
+                        else if (oldTree.Queue.MessagesCount < element.MessagesCount)
+                            lastNode.BackColor = Color.LightGreen;
+
+                        ResetBackColorIn(1000, lastNode).ConfigureAwait(false);
+                    }
                 }
             );
 
             host.QueuesNode.Expand();
+        }
+
+        public async Task ResetBackColorIn(int milisseconds, TreeNode node)
+        {
+            await Task.Delay(milisseconds);
+
+            node.BackColor = Color.White;
+        }
+
+        public ContextMenuStrip CreateContextMenuForGroupQueues(HostTree host)
+        {
+            ContextMenuStrip cms = new ContextMenuStrip()
+            {
+                ShowCheckMargin = false,
+                ImageList = new ImageList(),
+
+            };
+
+            var toolStripItem = new ToolStripMenuItem()
+            {
+                Text = "Refresh Interval",
+                Checked = host.Refreshing
+            };
+
+            toolStripItem.Click += async (object o, EventArgs e) =>
+            {
+                host.Refreshing = !host.Refreshing;
+
+                while (host.Refreshing)
+                {
+                    LoadQueues(host, host.Server).ConfigureAwait(false);
+                    await Task.Delay(5000);
+                }
+            };
+
+            cms.Items.Add(toolStripItem);
+
+            return cms;
         }
 
         public ContextMenuStrip CreateContextMenuForQueues(String name)

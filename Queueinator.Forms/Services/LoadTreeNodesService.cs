@@ -14,7 +14,7 @@ namespace Queueinator.Forms.Services
             Func<String, IEnumerable<T>, bool, String> buildText,
             Func<String, T, String> buildKey,
             ref Dictionary<String, TTree> refElements,
-            Action<TreeNode> decorateLastNode) where T : INode
+            Action<TreeNode, T, TTree> decorateLastNode) where T : INode
         {
             LoadNode(
                 parentNode,
@@ -34,7 +34,7 @@ namespace Queueinator.Forms.Services
             Func<String, IEnumerable<T>, bool, String> buildText,
             Func<String, T, String> buildKey,
             ref Dictionary<String, TTree> refElements,
-            Action<TreeNode> decorateNode,
+            Action<TreeNode, T, TTree> decorateNode,
             int depth) where T : INode
         {
             if (!elementsToAdd.Any()) return;
@@ -59,7 +59,7 @@ namespace Queueinator.Forms.Services
                     {
                         var elementNode = AddNode(parentNode, buildKey(item.Key, lastElement), text);
 
-                        decorateNode(elementNode);
+                        decorateNode(elementNode, lastElement, default);
 
                         refElements.Add(buildKey(item.Key, lastElement), buildTree(lastElement, elementNode));
                     }
@@ -67,8 +67,13 @@ namespace Queueinator.Forms.Services
                     {
                         try
                         {
+                            var oldTree = refElements[buildKey(item.Key, lastElement)];
+
                             var node = parentNode.Nodes.Find(buildKey(item.Key, lastElement), false)[0];
                             node.Text = text;
+                            decorateNode(node, lastElement, oldTree);
+
+                            refElements[buildKey(item.Key, lastElement)] = buildTree(lastElement, node);
                         }
                         catch (Exception ex)
                         {
