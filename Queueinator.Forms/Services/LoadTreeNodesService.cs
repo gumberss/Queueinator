@@ -90,6 +90,7 @@ namespace Queueinator.Forms.Services
                     if (parentNode.Nodes.ContainsKey(item.Key))
                     {
                         newParent = parentNode.Nodes.Find(item.Key, false)[0];
+
                         newParent.Text = text;
                     }
                     else

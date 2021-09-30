@@ -58,26 +58,6 @@ namespace Queueinator.Forms
             LoadServers();
         }
 
-        private void On_server_tree_view_back_color_changed(object sender, EventArgs e)
-        {
-            Thread.Sleep(1000);
-
-            foreach (TreeNode item in serverTreeView.Nodes)
-            {
-                ResetColor(item);
-            }
-        }
-
-        public void ResetColor(TreeNode node)
-        {
-            node.BackColor = Color.White;
-
-            foreach (TreeNode item in node.Nodes)
-            {
-                ResetColor(item);
-            }
-        }
-
         private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
         {
             var name = typeof(MoveMessageData).FullName;
@@ -369,10 +349,15 @@ namespace Queueinator.Forms
 
                     if (oldTree is not null)
                     {
+
+                        Color color = Color.White;
+
                         if (oldTree.Queue.MessagesCount > element.MessagesCount)
-                            lastNode.BackColor = Color.LightCoral;
+                            color = Color.LightCoral;
                         else if (oldTree.Queue.MessagesCount < element.MessagesCount)
-                            lastNode.BackColor = Color.LightGreen;
+                            color = Color.LightGreen;
+
+                        ChangeTreeBackColor(lastNode, color, false);
 
                         ResetBackColorIn(1000, lastNode).ConfigureAwait(false);
                     }
@@ -382,11 +367,22 @@ namespace Queueinator.Forms
             host.QueuesNode.Expand();
         }
 
+        private void ChangeTreeBackColor(TreeNode node, Color color, bool reset)
+        {
+            if (node == null) return;
+
+            if (!reset && node.BackColor != default && node.BackColor != Color.White) return;
+
+            node.BackColor = color;
+
+            ChangeTreeBackColor(node.Parent, color, reset);
+        }
+
         public async Task ResetBackColorIn(int milisseconds, TreeNode node)
         {
             await Task.Delay(milisseconds);
 
-            node.BackColor = Color.White;
+            ChangeTreeBackColor(node, Color.White, true);
         }
 
         public ContextMenuStrip CreateContextMenuForGroupQueues(HostTree host)
