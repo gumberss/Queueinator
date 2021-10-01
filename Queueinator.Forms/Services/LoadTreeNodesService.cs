@@ -70,7 +70,8 @@ namespace Queueinator.Forms.Services
                             var oldTree = refElements[buildKey(item.Key, lastElement)];
 
                             var node = parentNode.Nodes.Find(buildKey(item.Key, lastElement), false)[0];
-                            node.Text = text;
+                            if (node.Text != text)
+                                node.Text = text;
                             decorateNode(node, lastElement, oldTree);
 
                             refElements[buildKey(item.Key, lastElement)] = buildTree(lastElement, node);
@@ -83,22 +84,23 @@ namespace Queueinator.Forms.Services
                 }
                 else
                 {
-                    TreeNode newParent;
+                    TreeNode currentNode;
 
                     var text = buildText(item.Key, item, false);
 
                     if (parentNode.Nodes.ContainsKey(item.Key))
                     {
-                        newParent = parentNode.Nodes.Find(item.Key, false)[0];
+                        currentNode = parentNode.Nodes.Find(item.Key, false)[0];
 
-                        newParent.Text = text;
+                        if (currentNode.Text != text)
+                            currentNode.Text = text;
                     }
                     else
                     {
-                        newParent = AddNode(parentNode, item.Key, text);
+                        currentNode = AddNode(parentNode, item.Key, text);
                     }
 
-                    LoadNode(newParent, newItems, buildTree, buildText, buildKey, ref refElements, decorateNode, depth + 1);
+                    LoadNode(currentNode, newItems, buildTree, buildText, buildKey, ref refElements, decorateNode, depth + 1);
                 }
             }
         }

@@ -31,6 +31,14 @@ namespace Queueinator.Forms
         public MainScreen(IMediator mediator, NewServerForm newServerForm)
         {
             InitializeComponent();
+            Load += (object sender, EventArgs e) =>
+            {
+                this.SetStyle(ControlStyles.DoubleBuffer, true);
+
+                int style = NativeWindowAPI.GetWindowLong(this.Handle, NativeWindowAPI.GWL_EXSTYLE);
+                style |= NativeWindowAPI.WS_EX_COMPOSITE;
+                NativeWindowAPI.SetWindowLong(this.Handle, NativeWindowAPI.GWL_EXSTYLE, style);
+            };
 
             _newServerForm = newServerForm;
             _mediator = mediator;
@@ -56,6 +64,7 @@ namespace Queueinator.Forms
             serverTreeView.DragOver += On_server_tree_view_drag_over;
             serverTreeView.DragDrop += On_server_tree_view_drag_drop;
             LoadServers();
+
         }
 
         private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
@@ -227,7 +236,6 @@ namespace Queueinator.Forms
         Dictionary<String, ServerTree> _servers = new Dictionary<string, ServerTree>();
         Dictionary<String, QueueTree> _queues = new Dictionary<string, QueueTree>();
         Dictionary<String, ExchangeTree> _exchanges = new Dictionary<string, ExchangeTree>();
-
         private void ConnectToAServer(NewServerForm newServerPopup)
         {
             var dialogResult = newServerPopup.ShowDialog();
@@ -334,55 +342,94 @@ namespace Queueinator.Forms
                 return;
             }
 
-            new LoadTreeNodesService().LoadNode(
-                host.QueuesNode,
-                queues.Value.ToList(),
-                (queue, queueNode) => new QueueTree(queue, queueNode, host),
-                (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
-                (key, lastQueue) => $"Queue:{host.FullName()}:{lastQueue.Name}",
-                ref _queues,
-                (lastNode, element, oldTree) =>
-                {
-                    lastNode.ImageIndex = 2;
-                    lastNode.SelectedImageIndex = 2;
-                    lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
+            List<TreeNode> changed = new List<TreeNode>();
 
-                    if (oldTree is not null)
+            try
+            {
+
+                serverTreeView.BeginUpdate();
+                new LoadTreeNodesService().LoadNode(
+                    host.QueuesNode,
+                    queues.Value.ToList(),
+                    (queue, queueNode) => new QueueTree(queue, queueNode, host),
+                    (key, queues, isLeaf) => isLeaf ? $"{key} ({queues.First().MessagesReadyCount}) {queues.First().State}" : $"{key} ({queues.Sum(x => x.MessagesReadyCount)})",
+                    (key, lastQueue) => $"Queue:{host.FullName()}:{lastQueue.Name}",
+                    ref _queues,
+                    (lastNode, element, oldTree) =>
                     {
+                        lastNode.ImageIndex = 2;
+                        lastNode.SelectedImageIndex = 2;
+                        lastNode.ContextMenuStrip = CreateContextMenuForQueues(lastNode.Name);
 
-                        Color color = Color.White;
+                        if (oldTree is not null)
+                        {
+                            Color color = Color.White;
 
-                        if (oldTree.Queue.MessagesCount > element.MessagesCount)
-                            color = Color.LightCoral;
-                        else if (oldTree.Queue.MessagesCount < element.MessagesCount)
-                            color = Color.LightGreen;
+                            if (oldTree.Queue.MessagesCount > element.MessagesCount)
+                                color = Color.LightCoral;
+                            else if (oldTree.Queue.MessagesCount < element.MessagesCount)
+                                color = Color.LightGreen;
 
-                        ChangeTreeBackColor(lastNode, color, false);
-
-                        ResetBackColorIn(1000, lastNode).ConfigureAwait(false);
+                            if (color != Color.White)
+                            {
+                                changed.AddRange(ChangeTreeBackColor(lastNode, color, false, changed));
+                            }
+                        }
                     }
-                }
-            );
+                );
+            }
+            finally
+            {
+                serverTreeView.EndUpdate();
+            }
 
             host.QueuesNode.Expand();
         }
 
-        private void ChangeTreeBackColor(TreeNode node, Color color, bool reset)
+        private List<TreeNode> GetAllRelatedNodes(IEnumerable<TreeNode> changed)
         {
-            if (node == null) return;
+            var allNodes = new List<TreeNode>();
 
-            if (!reset && node.BackColor != default && node.BackColor != Color.White) return;
+            foreach (var item in changed)
+            {
+                foreach (TreeNode parent in item.Nodes)
+                {
+                    allNodes.AddRange(GetAllRelatedNodes(new[] { parent }));
+                }
 
-            node.BackColor = color;
+                allNodes.Add(item);
+            }
 
-            ChangeTreeBackColor(node.Parent, color, reset);
+            return allNodes;
         }
 
-        public async Task ResetBackColorIn(int milisseconds, TreeNode node)
+        private async Task SoftBlink(TreeNode node, Color c1, Color c2, short CycleTime_ms, bool BkClr)
         {
-            await Task.Delay(milisseconds);
+            var sw = new Stopwatch(); sw.Start();
+            short halfCycle = (short)Math.Round(CycleTime_ms * 0.5);
 
-            ChangeTreeBackColor(node, Color.White, true);
+            while (sw.ElapsedMilliseconds < CycleTime_ms)
+            {
+                await Task.Delay(1);
+                var n = sw.ElapsedMilliseconds % CycleTime_ms;
+                var per = (double)Math.Abs(n - halfCycle) / halfCycle;
+                var red = (short)Math.Round((c2.R - c1.R) * per) + c1.R;
+                var grn = (short)Math.Round((c2.G - c1.G) * per) + c1.G;
+                var blw = (short)Math.Round((c2.B - c1.B) * per) + c1.B;
+                var clr = Color.FromArgb(red, grn, blw);
+                if (BkClr) node.BackColor = clr;
+            }
+        }
+
+        private List<TreeNode> ChangeTreeBackColor(TreeNode node, Color color, bool reset, List<TreeNode> changed)
+        {
+            if (node == null) return new List<TreeNode>();
+
+            if (changed.Contains(node)) return new List<TreeNode>();
+
+            SoftBlink(node, color, Color.White, 2000, true).ConfigureAwait(false);
+
+            return new[] { node }.Concat(ChangeTreeBackColor(node.Parent, color, reset, changed)).ToList();
         }
 
         public ContextMenuStrip CreateContextMenuForGroupQueues(HostTree host)
