@@ -63,6 +63,7 @@ namespace Queueinator.Forms
             serverTreeView.AllowDrop = true;
             serverTreeView.DragOver += On_server_tree_view_drag_over;
             serverTreeView.DragDrop += On_server_tree_view_drag_drop;
+            //tabControl.Multiline = true;
             LoadServers();
 
         }
@@ -537,13 +538,13 @@ namespace Queueinator.Forms
             }
         }
 
-        private TabPage GetPageByText(String text)
+        private TabPage GetPageByText(String name)
         {
             TabPage page = null;
 
             foreach (TabPage existentPage in tabControl.TabPages)
             {
-                if (existentPage.Text == text)
+                if (existentPage.Name == name)
                 {
                     page = existentPage;
                     break;

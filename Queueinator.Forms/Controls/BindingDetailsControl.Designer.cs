@@ -67,7 +67,7 @@ namespace Queueinator.Forms.Controls
             this.dgBindings.Location = new System.Drawing.Point(3, 3);
             this.dgBindings.Name = "dgBindings";
             this.dgBindings.RowTemplate.Height = 25;
-            this.dgBindings.Size = new System.Drawing.Size(536, 322);
+            this.dgBindings.Size = new System.Drawing.Size(536, 345);
             this.dgBindings.TabIndex = 10;
             // 
             // txtDetails
@@ -79,7 +79,7 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Multiline = true;
             this.txtDetails.Name = "txtDetails";
             this.txtDetails.ReadOnly = true;
-            this.txtDetails.Size = new System.Drawing.Size(535, 322);
+            this.txtDetails.Size = new System.Drawing.Size(535, 345);
             this.txtDetails.TabIndex = 12;
             // 
             // BindingDetailsControl
