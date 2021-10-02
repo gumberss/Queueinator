@@ -11,6 +11,8 @@ namespace Queueinator.Forms.Domain
 
         public HostTree Host { get; }
 
+        public ServerTree Server => Host.Server;
+
         public ExchangeTree(HostExchange exchange, TreeNode node, HostTree host)
         {
             Exchange = exchange;
