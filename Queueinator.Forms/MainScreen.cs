@@ -426,7 +426,7 @@ namespace Queueinator.Forms
             if (node == null) return new List<TreeNode>();
 
             if (changed.Contains(node)) return new List<TreeNode>();
-
+            
             SoftBlink(node, color, Color.White, 2000, true).ConfigureAwait(false);
 
             return new[] { node }.Concat(ChangeTreeBackColor(node.Parent, color, reset, changed)).ToList();
@@ -513,6 +513,19 @@ namespace Queueinator.Forms
                     page.Name = e.Node.Name;
                     tabControl.TabPages.Add(page);
                     page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]) { Name = e.Node.Name });
+                }
+
+                tabControl.SelectTab(page);
+            }else if (_exchanges.ContainsKey(e.Node.Name))
+            {
+                TabPage page = GetPageByText(e.Node.Name);
+
+                if (page is null)
+                {
+                    page = new TabPage(e.Node.Name);
+                    page.Name = e.Node.Name;
+                    tabControl.TabPages.Add(page);
+                    page.Controls.Add(new ExchangeControl(_mediator, _exchanges[e.Node.Name]) { Name = e.Node.Name });
                 }
 
                 tabControl.SelectTab(page);
