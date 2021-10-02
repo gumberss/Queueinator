@@ -41,7 +41,9 @@ namespace Queueinator.Forms.Controls
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -62,10 +64,10 @@ namespace Queueinator.Forms.Controls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgBindings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgBindings.Location = new System.Drawing.Point(3, -1);
+            this.dgBindings.Location = new System.Drawing.Point(3, 3);
             this.dgBindings.Name = "dgBindings";
             this.dgBindings.RowTemplate.Height = 25;
-            this.dgBindings.Size = new System.Drawing.Size(534, 325);
+            this.dgBindings.Size = new System.Drawing.Size(534, 321);
             this.dgBindings.TabIndex = 10;
             // 
             // txtDetails
@@ -73,16 +75,15 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDetails.Location = new System.Drawing.Point(3, -1);
+            this.txtDetails.Location = new System.Drawing.Point(3, 3);
             this.txtDetails.Multiline = true;
             this.txtDetails.Name = "txtDetails";
-            this.txtDetails.Size = new System.Drawing.Size(531, 325);
+            this.txtDetails.Size = new System.Drawing.Size(531, 321);
             this.txtDetails.TabIndex = 12;
             // 
             // BindingDetailsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.Controls.Add(this.splitContainer1);
             this.Name = "BindingDetailsControl";
             this.Size = new System.Drawing.Size(1081, 327);

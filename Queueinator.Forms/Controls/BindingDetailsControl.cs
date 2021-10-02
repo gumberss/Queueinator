@@ -20,13 +20,25 @@ namespace Queueinator.Forms.Controls
         public BindingDetailsControl(ExchangeTree exchange, List<ExchangeBinding> bindings)
         {
             InitializeComponent();
+            this.Dock = DockStyle.Fill;
 
             _exchange = exchange;
             _bindings = bindings;
+
+            FillDataSource();
         }
 
         public void FillDataSource()
         {
+            dgBindings.Columns.Add("Source", "Source");
+            dgBindings.Columns.Add("Destination", "Destination");
+            dgBindings.Columns.Add("RoutingKey", "RoutingKey");
+
+            foreach (DataGridViewColumn column in dgBindings.Columns)
+            {
+                column.Width = 170;
+            }
+
             foreach (var binding in _bindings)
             {
                 try

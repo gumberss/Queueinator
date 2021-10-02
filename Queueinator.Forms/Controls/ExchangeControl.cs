@@ -29,6 +29,8 @@ namespace Queueinator.Forms.Controls
             _mediator = mediator;
             _exchange = exchange;
 
+            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
+
             LoadData().ConfigureAwait(false);
         }
 
