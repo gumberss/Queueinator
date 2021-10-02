@@ -63,6 +63,7 @@ namespace Queueinator.Forms
             serverTreeView.AllowDrop = true;
             serverTreeView.DragOver += On_server_tree_view_drag_over;
             serverTreeView.DragDrop += On_server_tree_view_drag_drop;
+            //tabControl.Multiline = true;
             LoadServers();
 
         }
@@ -426,7 +427,7 @@ namespace Queueinator.Forms
             if (node == null) return new List<TreeNode>();
 
             if (changed.Contains(node)) return new List<TreeNode>();
-            
+
             SoftBlink(node, color, Color.White, 2000, true).ConfigureAwait(false);
 
             return new[] { node }.Concat(ChangeTreeBackColor(node.Parent, color, reset, changed)).ToList();
@@ -511,12 +512,15 @@ namespace Queueinator.Forms
                 {
                     page = new TabPage(e.Node.Name);
                     page.Name = e.Node.Name;
+                    var queue = _queues[e.Node.Name];
+                    page.Text = $"Queue: {queue.Queue.Name}";
                     tabControl.TabPages.Add(page);
-                    page.Controls.Add(new QueueControl(_mediator, _queues[e.Node.Name]) { Name = e.Node.Name });
+                    page.Controls.Add(new QueueControl(_mediator, queue) { Name = e.Node.Name });
                 }
 
                 tabControl.SelectTab(page);
-            }else if (_exchanges.ContainsKey(e.Node.Name))
+            }
+            else if (_exchanges.ContainsKey(e.Node.Name))
             {
                 TabPage page = GetPageByText(e.Node.Name);
 
@@ -524,21 +528,23 @@ namespace Queueinator.Forms
                 {
                     page = new TabPage(e.Node.Name);
                     page.Name = e.Node.Name;
+                    var exchange = _exchanges[e.Node.Name];
+                    page.Text = $"Exchange: {exchange.Exchange.Name}";
                     tabControl.TabPages.Add(page);
-                    page.Controls.Add(new ExchangeControl(_mediator, _exchanges[e.Node.Name]) { Name = e.Node.Name });
+                    page.Controls.Add(new ExchangeControl(_mediator, exchange) { Name = e.Node.Name });
                 }
 
                 tabControl.SelectTab(page);
             }
         }
 
-        private TabPage GetPageByText(String text)
+        private TabPage GetPageByText(String name)
         {
             TabPage page = null;
 
             foreach (TabPage existentPage in tabControl.TabPages)
             {
-                if (existentPage.Text == text)
+                if (existentPage.Name == name)
                 {
                     page = existentPage;
                     break;

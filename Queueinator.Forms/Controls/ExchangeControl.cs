@@ -23,13 +23,13 @@ namespace Queueinator.Forms.Controls
         {
             InitializeComponent();
 
+            this.Dock = DockStyle.Fill;
+
             tbSource.Text = "Source Bindings";
             tbDestination.Text = "Destination Bindings";
 
             _mediator = mediator;
             _exchange = exchange;
-
-            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 
             LoadData().ConfigureAwait(false);
         }
@@ -49,6 +49,7 @@ namespace Queueinator.Forms.Controls
             }
 
             tbSource.Controls.Add(new BindingDetailsControl(_exchange, bindings.Value.FromExchange));
+            tbDestination.Controls.Add(new BindingDetailsControl(_exchange, bindings.Value.ToExchange));
         }
 
     }
