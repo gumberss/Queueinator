@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,6 +25,8 @@ namespace Queueinator.Forms.Controls
 
             _exchange = exchange;
             _bindings = bindings;
+
+            dgBindings.SelectionChanged += On_Change_Row_selection;
 
             FillDataSource();
         }
@@ -57,6 +60,24 @@ namespace Queueinator.Forms.Controls
                     MessageBox.Show(ex.Message, "Error");
                 }
             }
+        }
+
+        private void On_Change_Row_selection(object sender, EventArgs e)
+        {
+            if (dgBindings.SelectedCells.Count == 0) return;
+
+            //var selectedRow = dgBindings.Rows[];
+
+            var rowIndex = dgBindings.SelectedCells[0].RowIndex;
+
+            if (_bindings.Count <= rowIndex) return;
+
+            var binding = _bindings[rowIndex];
+
+            txtDetails.Text = JsonSerializer.Serialize(binding, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            });
         }
     }
 }

@@ -54,8 +54,8 @@ namespace Queueinator.Forms.Controls
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtDetails);
-            this.splitContainer1.Size = new System.Drawing.Size(1081, 327);
-            this.splitContainer1.SplitterDistance = 540;
+            this.splitContainer1.Size = new System.Drawing.Size(1087, 351);
+            this.splitContainer1.SplitterDistance = 542;
             this.splitContainer1.TabIndex = 0;
             // 
             // dgBindings
@@ -67,7 +67,7 @@ namespace Queueinator.Forms.Controls
             this.dgBindings.Location = new System.Drawing.Point(3, 3);
             this.dgBindings.Name = "dgBindings";
             this.dgBindings.RowTemplate.Height = 25;
-            this.dgBindings.Size = new System.Drawing.Size(534, 321);
+            this.dgBindings.Size = new System.Drawing.Size(536, 322);
             this.dgBindings.TabIndex = 10;
             // 
             // txtDetails
@@ -78,7 +78,8 @@ namespace Queueinator.Forms.Controls
             this.txtDetails.Location = new System.Drawing.Point(3, 3);
             this.txtDetails.Multiline = true;
             this.txtDetails.Name = "txtDetails";
-            this.txtDetails.Size = new System.Drawing.Size(531, 321);
+            this.txtDetails.ReadOnly = true;
+            this.txtDetails.Size = new System.Drawing.Size(535, 322);
             this.txtDetails.TabIndex = 12;
             // 
             // BindingDetailsControl
@@ -86,7 +87,7 @@ namespace Queueinator.Forms.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.Controls.Add(this.splitContainer1);
             this.Name = "BindingDetailsControl";
-            this.Size = new System.Drawing.Size(1081, 327);
+            this.Size = new System.Drawing.Size(1087, 351);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
