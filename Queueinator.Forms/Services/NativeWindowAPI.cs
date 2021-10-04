@@ -12,6 +12,6 @@ namespace Queueinator.Forms.Services
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32")]
-        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, long dwNewLong);
+        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
     }
 }
