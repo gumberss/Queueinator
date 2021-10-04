@@ -67,6 +67,12 @@ namespace Queueinator.Forms
             //tabControl.Multiline = true;
             LoadServers();
 
+            serverTreeView.AfterExpand += (sender, e) =>
+            {
+                if (e.Node.Nodes.Count == 1)
+                    e.Node.Nodes[0].Expand();
+            };
+
         }
 
         private async void On_server_tree_view_drag_drop(object sender, DragEventArgs e)
