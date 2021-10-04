@@ -31,13 +31,14 @@ namespace Queueinator.Forms
         public MainScreen(IMediator mediator, NewServerForm newServerForm)
         {
             InitializeComponent();
+            
             Load += (object sender, EventArgs e) =>
             {
                 this.SetStyle(ControlStyles.DoubleBuffer, true);
 
                 int style = NativeWindowAPI.GetWindowLong(this.Handle, NativeWindowAPI.GWL_EXSTYLE);
                 style |= NativeWindowAPI.WS_EX_COMPOSITE;
-                NativeWindowAPI.SetWindowLong(this.Handle, NativeWindowAPI.GWL_EXSTYLE, style);
+                NativeWindowAPI.SetWindowLong(serverTreeView.Handle, NativeWindowAPI.GWL_EXSTYLE, style);
             };
 
             _newServerForm = newServerForm;
